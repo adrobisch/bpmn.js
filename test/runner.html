@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <title>Jasmine Spec Runner</title>
+
+    <link rel="stylesheet" type="text/css" href="lib/jasmine/jasmine.css">
+
+    <script type="text/javascript" src="lib/jasmine/jasmine.js"></script>
+    <script type="text/javascript" src="lib/jasmine/jasmine-html.js"></script>
+
+    <script src="../js/lib/dojo/dojo/dojo.js"></script>
+
+    <script>
+      (function() {
+
+        require({
+          paths: {
+            "sax": 'js/lib/sax',
+            "kinetic": 'js/lib/kinetic'
+          },
+          shim: {
+            "sax" : {
+              exports : "sax"
+            },
+            "kinetic" : {
+              exports: "Kinetic"
+            }
+          },
+          baseUrl:"../",
+          packages:[
+            { name:"dojo", location:"js/lib/dojo/dojo" },
+            { name:"dojox", location:"js/lib/dojo/dojox" },
+            { name:"bpmn", location: "js/bpmn"},
+            { name:"test", location: "test" }
+          ]
+        });
+
+        var jasmineEnv = jasmine.getEnv();
+        jasmineEnv.updateInterval = 1000;
+
+        var htmlReporter = new jasmine.HtmlReporter();
+
+        jasmineEnv.addReporter(htmlReporter);
+
+        jasmineEnv.specFilter = function(spec) {
+          return htmlReporter.specFilter(spec);
+        };
+
+        function execJasmine() {
+          jasmineEnv.execute();
+        }
+
+        var specs = [
+          "test/spec/Serializer",
+          "test/spec/Execution",
+          "test/spec/Renderer",
+          "dojo/domReady!"
+        ];
+
+        require(specs, function() {
+          execJasmine();
+        });
+      })();
+    </script>
+  </head>
+
+  <body>
+    <div id="test"></div>
+  </body>
+</html>
