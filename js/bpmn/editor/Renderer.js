@@ -1,12 +1,15 @@
-define(["kinetic",
-        "dojo/_base/declare",
+define(["dojo/_base/declare",
         "dojo/_base/array",
         "bpmn/Activity",
         "bpmn/Gateway",
         "bpmn/Event",
-        "bpmn/SequenceFlow"],
-function (Kinetic, declare, array, Activity, Gateway, Event, SequenceFlow) {
-
+        "bpmn/SequenceFlow",
+        "bpmn/util/diagram/Canvas",
+        "bpmn/editor/ActivityRenderer",
+        "bpmn/editor/EventRenderer",
+        "bpmn/editor/GatewayRenderer",
+        "bpmn/editor/LabelRenderer"],
+function (declare, array, Activity, Gateway, Event, SequenceFlow, Canvas, ActivityRenderer, EventRenderer, GatewayRenderer, LabelRenderer) {
   var Renderer = {
 
     skins: {
@@ -25,6 +28,15 @@ function (Kinetic, declare, array, Activity, Gateway, Event, SequenceFlow) {
       this.definitions = definitions;
       this.scale = 1.0;
       this.skinName = "default";
+
+      this.bindDelegates();
+    },
+
+    bindDelegates : function () {
+      this.renderActivity = new ActivityRenderer().render;
+      this.renderEvent = new EventRenderer().render;
+      this.renderGateway = new GatewayRenderer().render;
+      this.label = new LabelRenderer(this);
     },
 
     evaluateOptions : function (options) {
@@ -38,27 +50,12 @@ function (Kinetic, declare, array, Activity, Gateway, Event, SequenceFlow) {
 
     render :  function (options) {
       this.evaluateOptions(options);
-
-      var stage = this.stage = new Kinetic.Stage({
-        container: options.container,
-        width: options.width ? options.width : 500,
-        height: options.height ? options.height :  500
-      });
-      stage.setScale(this.scale, this.scale);
-
-      var shapeLayer = this.shapeLayer = new Kinetic.Layer();
-      var connectionsLayer = this.connectionsLayer = new Kinetic.Layer();
-      var labelLayer = this.labelLayer = new Kinetic.Layer();
-
-      stage.add(shapeLayer);
-      stage.add(connectionsLayer);
-      stage.add(labelLayer);
-
+      this.canvas = new Canvas(this.scale, options);
       this.renderElements();
 
-      shapeLayer.draw();
-      connectionsLayer.draw();
-      labelLayer.draw();
+      this.canvas.shapeLayer.draw();
+      this.canvas.connectionsLayer.draw();
+      this.canvas.labelLayer.draw();
     },
 
     renderElements : function () {
@@ -75,34 +72,34 @@ function (Kinetic, declare, array, Activity, Gateway, Event, SequenceFlow) {
     },
 
     renderElement: function (element) {
-      var group = new Kinetic.Group({
+      var group = this.canvas.createGroup({
         draggable: true
       });
 
       if (element instanceof SequenceFlow) {
         this.renderConnection(element, group);
-        this.connectionsLayer.add(group);
+        this.canvas.connectionsLayer.add(group);
       }
       else if (element instanceof Activity) {
-        this.addCenteredInnerLabel(element, this.renderActivity(element, group), element.name());
-        this.shapeLayer.add(group);
+        this.label.renderCentered(element.getBounds(), this.renderActivity(element, group), element.name());
+        this.canvas.shapeLayer.add(group);
         this.setGroupBounds(group, element.getBounds());
       }
       else if (element instanceof Event) {
         this.renderEvent(element, group);
-        this.shapeLayer.add(group);
+        this.canvas.shapeLayer.add(group);
         this.setGroupBounds(group, this.eventBounds(element));
       }
       else if (element instanceof Gateway) {
         this.renderGateway(element, group);
-        this.shapeLayer.add(group);
+        this.canvas.shapeLayer.add(group);
         this.setGroupBounds(group, element.getBounds());
       }
       else {
         console.log("unable to render flowElement", element);
       }
 
-      this.expandStageIfNeeded(group);
+      this.canvas.adjustCanvasSize(group);
     },
 
     eventBounds: function (eventElement) {
@@ -122,73 +119,6 @@ function (Kinetic, declare, array, Activity, Gateway, Event, SequenceFlow) {
       group.setHeight(bounds.height());
     },
 
-    renderActivity: function (activity, group) {
-      var bounds = activity.getBounds();
-      var cornerRadius = this.skin()["activity_corner_radius"];
-
-      var rect =  new Kinetic.Rect({
-        width: bounds.width(),
-        height: bounds.height(),
-        "cornerRadius" : cornerRadius,
-        stroke: this.skin()["activity_stroke"],
-        fill: this.skin()["activity_fill"],
-        strokeWidth: 2
-      });
-
-      group.add(rect);
-
-      return group;
-    },
-
-    renderEvent: function (event, group) {
-      var bounds = event.getBounds();
-      var circle =  new Kinetic.Circle({
-        width: bounds.width(),
-        height: bounds.height(),
-        stroke: this.skin()["event_stroke"],
-        strokeWidth: 2,
-        draggable: true
-      });
-
-      group.add(circle);
-
-      return group;
-    },
-
-    renderGateway: function (gateway, group) {
-      var bounds = gateway.getBounds();
-      var rect =  new Kinetic.Polygon({
-        points: [0,  bounds.height() /2, // left
-                 bounds.width() /2, 0, // top
-                 bounds.width(), bounds.height() /2, // right
-                 bounds.width() /2, bounds.height()], // bottom
-        stroke: 'black',
-        strokeWidth: 2,
-        draggable: true
-      });
-
-      group.add(rect);
-      return group;
-    },
-
-    addCenteredInnerLabel : function (containerElement, group, text) {
-      var bounds = containerElement.getBounds();
-
-      var label = new Kinetic.Text({
-        text: text,
-        fontSize: this.skin()["label_font_size"],
-        fontFamily: this.skin()["label_font_family"],
-        fill: this.skin()["label_fill"],
-        align: 'center'
-      });
-
-      label.setY(bounds.height()/2 - label.getFontSize());
-      label.setWidth(bounds.width());
-
-      group.add(label);
-      return group;
-    },
-
     renderConnection: function (connection, group) {
       var joinedPoints = [];
 
@@ -197,31 +127,15 @@ function (Kinetic, declare, array, Activity, Gateway, Event, SequenceFlow) {
         joinedPoints.push(point.y);
       });
 
-      var line = new Kinetic.Line({
-        points: joinedPoints,
+      var arrow = this.canvas.createArrowLine(joinedPoints, {
         stroke: 'black',
         strokeWidth: 2,
         lineCap: 'round',
         lineJoin: 'round'
       });
 
-      group.add(line);
+      group.add(arrow);
       return group;
-    },
-
-    expandStageIfNeeded : function (shape) {
-      // buffer for strokes etc
-      var buffer = 10;
-      var x = shape.getX(), y = shape.getY(), width = shape.getWidth(), height = shape.getHeight();
-
-      if ((x + width) * this.scale > this.stage.getWidth()) {
-
-        this.stage.setWidth((x+width+buffer)*this.scale);
-      }
-
-      if ((y + height) * this.scale > this.stage.getHeight()) {
-        this.stage.setHeight((y+height+buffer)*this.scale);
-      }
     },
 
     skin: function() {
