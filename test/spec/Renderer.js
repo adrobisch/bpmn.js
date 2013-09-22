@@ -2,47 +2,51 @@
  * Renderer spec
  */
 
-define(["bpmn/util/Serializer", "bpmn/editor/Renderer", "dojo/request", "dojo/ready"], function (Serializer, Renderer, request, ready) {
+define(["test/util/BpmnSpecification", "bpmn/editor/Renderer", "bpmn/util/diagram/Canvas"], function (BpmnSpecification, Renderer, Canvas) {
+
+  var withDefinitions = BpmnSpecification.withDefinitions;
+
+  var options = {
+    container: "test",
+    scale: 1
+  };
+
+  var createRendererWithCanvasSpy = function (definitions) {
+    var renderer = new Renderer(definitions, options);
+
+    spyOn(renderer.canvas, "createRect").andCallThrough();
+    spyOn(renderer.canvas, "createPath").andCallThrough();
+    spyOn(renderer.canvas, "createCircle").andCallThrough();
+    spyOn(renderer.canvas, "createPolygon").andCallThrough();
+    spyOn(renderer.canvas, "createArrowLine").andCallThrough();
+
+    return renderer;
+  };
 
   return describe("Renderer", function () {
-
-    var wrapRun = function (testData, runFunction) {
-      return function () {
-        runFunction(testData);
-      };
-    };
-
-    var load = function (modelPath, runsFunction) {
-      return function () {
-        var loaded = false;
-        var testData = {};
-
-        request(modelPath).then(function (data) {
-          loaded = true;
-          testData.testXml = data;
-        });
-
-        waitsFor(function () {
-          return loaded;
-        }, "loading never completed", 5000);
-
-        runs(wrapRun(testData, runsFunction));
-      }
-    };
-
     describe("simple rendering", function () {
+      it("should render xor model", withDefinitions("data/test-xor.bpmn", function (definitions) {
+        // given:
+        var renderer = createRendererWithCanvasSpy(definitions);
+        // when:
+        renderer.render();
+        // then:
+        expect(renderer.canvas.createRect.calls.length).toEqual(4);
+        expect(renderer.canvas.createPath.calls.length).toEqual(4);
+        expect(renderer.canvas.createCircle.calls.length).toEqual(2);
+        expect(renderer.canvas.createPolygon.calls.length).toEqual(2);
+        expect(renderer.canvas.createArrowLine.calls.length).toEqual(8);
+      }));
 
-      function checkRenderXorModel(testData) {
-        var definitions = new Serializer().fromXML(testData.testXml);
-        ready(function () {
-          new Renderer(definitions).render({
-            container: "test",
-            scale: 1
-          });
-        });
-      };
-
-      it("should render xor model", load("data/test-xor.bpmn", checkRenderXorModel));
+      it("should render task types", withDefinitions("data/test-tasktypes.bpmn", function (definitions) {
+        // given:
+        var renderer = createRendererWithCanvasSpy(definitions);
+        // when:
+        renderer.render();
+        // then:
+        expect(renderer.canvas.createRect.calls.length).toEqual(5);
+        expect(renderer.canvas.createPath.calls.length).toEqual(5);
+      }));
     });
 
   });

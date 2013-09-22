@@ -36,20 +36,17 @@
           ]
         });
 
-        var jasmineEnv = jasmine.getEnv();
-        jasmineEnv.updateInterval = 1000;
+        var setupEnv = function () {
+          var jasmineEnv = jasmine.getEnv();
+          jasmineEnv.updateInterval = 1000;
+          var htmlReporter = new jasmine.HtmlReporter();
 
-        var htmlReporter = new jasmine.HtmlReporter();
-
-        jasmineEnv.addReporter(htmlReporter);
-
-        jasmineEnv.specFilter = function(spec) {
-          return htmlReporter.specFilter(spec);
+          jasmineEnv.addReporter(htmlReporter);
+          jasmineEnv.specFilter = function(spec) {
+              return htmlReporter.specFilter(spec);
+          };
+          return jasmineEnv;
         };
-
-        function execJasmine() {
-          jasmineEnv.execute();
-        }
 
         var specs = [
           "test/spec/Serializer",
@@ -59,8 +56,9 @@
         ];
 
         require(specs, function() {
-          execJasmine();
+          setupEnv().execute();
         });
+
       })();
     </script>
   </head>

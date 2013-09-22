@@ -1,12 +1,12 @@
 define(["kinetic"], function (Kinetic) {
-  var Canvas = function Canvas(scale, options) {
-    this.scale = scale;
+  var Canvas = function Canvas(options) {
+    this.scale = options.scale;
     var stage = this.stage = new Kinetic.Stage({
       container: options.container,
       width: options.width ? options.width : 500,
       height: options.height ? options.height :  500
     });
-    stage.setScale(scale, scale);
+    stage.setScale(this.scale, this.scale);
 
     this.shapeLayer = new Kinetic.Layer();
     this.connectionsLayer = new Kinetic.Layer();
@@ -40,6 +40,10 @@ define(["kinetic"], function (Kinetic) {
       return new Kinetic.Polygon(polygon);
     };
 
+    this.createPath = function (path) {
+      return new Kinetic.Path(path);
+    };
+
     this.createArrowLine = function (points, lineOptions, size){
       var headlen = size ? size : 6;
 
@@ -56,7 +60,7 @@ define(["kinetic"], function (Kinetic) {
       return line;
     };
 
-    this.adjustCanvasSize = function (shape) {
+    this.expandCanvasIfNeeded = function (shape) {
       // buffer for strokes etc
       var buffer = 10;
       var x = shape.getX(), y = shape.getY(), width = shape.getWidth(), height = shape.getHeight();

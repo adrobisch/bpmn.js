@@ -24,33 +24,29 @@ function (declare, array, Activity, Gateway, Event, SequenceFlow, Canvas, Activi
       }
     },
 
-    constructor : function (definitions) {
+    constructor : function (definitions, options) {
       this.definitions = definitions;
-      this.scale = 1.0;
       this.skinName = "default";
 
       this.bindDelegates();
+      this.evaluateOptionsAndDefaults(options);
+      this.canvas = new Canvas(this.options);
     },
 
     bindDelegates : function () {
-      this.renderActivity = new ActivityRenderer().render;
+      this.activity = new ActivityRenderer(this);
       this.renderEvent = new EventRenderer().render;
       this.renderGateway = new GatewayRenderer().render;
       this.label = new LabelRenderer(this);
     },
 
-    evaluateOptions : function (options) {
-      if (options.skin) {
-        this.skinName = options.skin;
-      }
-      if (options.scale) {
-        this.scale = options.scale;
-      }
+    evaluateOptionsAndDefaults : function (options) {
+      this.options = options;
+      this.skinName = options.skin ? options.skin : "default";
+      this.options.scale = options.scale ? options.scale  : 1.0;
     },
 
-    render :  function (options) {
-      this.evaluateOptions(options);
-      this.canvas = new Canvas(this.scale, options);
+    render :  function () {
       this.renderElements();
 
       this.canvas.shapeLayer.draw();
@@ -81,7 +77,7 @@ function (declare, array, Activity, Gateway, Event, SequenceFlow, Canvas, Activi
         this.canvas.connectionsLayer.add(group);
       }
       else if (element instanceof Activity) {
-        this.label.renderCentered(element.getBounds(), this.renderActivity(element, group), element.name());
+        this.label.renderCentered(element.getBounds(), this.activity.render(element, group), element.name());
         this.canvas.shapeLayer.add(group);
         this.setGroupBounds(group, element.getBounds());
       }
@@ -99,7 +95,7 @@ function (declare, array, Activity, Gateway, Event, SequenceFlow, Canvas, Activi
         console.log("unable to render flowElement", element);
       }
 
-      this.canvas.adjustCanvasSize(group);
+      this.canvas.expandCanvasIfNeeded(group);
     },
 
     eventBounds: function (eventElement) {

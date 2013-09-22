@@ -10,6 +10,8 @@ define([
   "bpmn/BoundaryEvent",
   "bpmn/UserTask",
   "bpmn/ServiceTask",
+  "bpmn/BusinessRuleTask",
+  "bpmn/ReceiveTask",
   "bpmn/SubProcess",
   "bpmn/ExclusiveGateway",
   "bpmn/ParallelGateway",
