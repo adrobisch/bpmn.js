@@ -38,8 +38,7 @@ module.exports = function(grunt) {
           name : "bpmn/Bpmn",
           baseUrl: "./js",
           packages: [
-            { name: "dojo", location: "lib/dojo/dojo" },
-            { name: "dojox", location: "lib/dojo/dojox"},
+            { name: "dojo", location: "../node_modules/dojo" },
             { name: "bpmn", location: "bpmn"}],
           out: "compiled/bpmn.min.js"
         }

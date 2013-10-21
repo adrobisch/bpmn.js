@@ -1,12 +1,10 @@
-define(["dojo/_base/declare", "dojox/collections/Dictionary"], function (declare, Dictionary) {
+define(["dojo/_base/declare"], function (declare) {
   var index = {
     constructor : function () {
-      //this._ = new Dictionary();
       this._ = {};
     },
 
     add : function (key, value) {
-      //this._.add(key, value);
       this._[key] = value;
     },
 
@@ -27,7 +25,6 @@ define(["dojo/_base/declare", "dojox/collections/Dictionary"], function (declare
     },
 
     item : function (key) {
-      //return this._.item(key);
       return this._[key];
     }
   };

@@ -9,7 +9,7 @@
     <script type="text/javascript" src="lib/jasmine/jasmine.js"></script>
     <script type="text/javascript" src="lib/jasmine/jasmine-html.js"></script>
 
-    <script src="../js/lib/dojo/dojo/dojo.js"></script>
+    <script src="../node_modules/dojo/dojo.js"></script>
 
     <script>
       (function() {
@@ -29,8 +29,7 @@
           },
           baseUrl:"../",
           packages:[
-            { name:"dojo", location:"js/lib/dojo/dojo" },
-            { name:"dojox", location:"js/lib/dojo/dojox" },
+            { name:"dojo", location:"node_modules/dojo" },
             { name:"bpmn", location: "js/bpmn"},
             { name:"test", location: "test" }
           ]

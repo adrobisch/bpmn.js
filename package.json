@@ -1,6 +1,9 @@
 {
   "name": "bpmn.js",
   "version": "0.3.0",
+  "dependencies" : {
+    "dojo" : "1.9.1"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-requirejs" : "~0.4.0",
