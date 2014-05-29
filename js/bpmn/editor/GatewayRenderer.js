@@ -8,6 +8,7 @@ define([], function () {
           bounds.width(), bounds.height() / 2, // right
           bounds.width() / 2, bounds.height()], // bottom
         stroke: 'black',
+        fill: 'white',
         strokeWidth: 2,
         draggable: true
       });

@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <title>bpmn.js example</title>
+
+    <script src="node_modules/requirejs/require.js"></script>
+    <script>
+      (function() {
+        require({
+          paths: {
+            "jquery" : "node_modules/jquery/dist/jquery.min",
+            "sax": 'node_modules/sax/lib/sax',
+            "kinetic": 'node_modules/kinetic/kinetic.min',
+            "bpmn" : "lib/bpmn.combined"
+          },
+          shim: {
+            "jquery": {
+              exports: "$"
+            },
+            "sax" : {
+              exports : "sax"
+            },
+            "kinetic" : {
+              exports: "Kinetic"
+            },
+            "bpmn" : {}
+          },
+          baseUrl: "./",
+          packages:[
+            { name: "dojo", location: "node_modules/dojo" }
+          ]
+        });
+
+      })();
+
+      require(["bpmn", "jquery"], function (Bpmn, $) {
+          var options = {
+              container: "example",
+              scale: 1
+          };
+
+          $.get("test/data/test-and.bpmn", function (bpmnXml) {
+              var bpmn = new Bpmn();
+              var definitions = bpmn.serializer.fromXML(bpmnXml);
+              bpmn.renderer(definitions, options).render();
+          });
+      });
+    </script>
+  </head>
+  <body>
+    <div id="example"></div>
+  </body>
+</html>

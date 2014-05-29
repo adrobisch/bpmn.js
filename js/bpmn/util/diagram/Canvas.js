@@ -6,7 +6,7 @@ define(["kinetic"], function (Kinetic) {
       width: options.width ? options.width : 500,
       height: options.height ? options.height :  500
     });
-    stage.setScale(this.scale, this.scale);
+    stage.scale({ x: this.scale, y: this.scale });
 
     this.shapeLayer = new Kinetic.Layer();
     this.connectionsLayer = new Kinetic.Layer();
@@ -37,7 +37,8 @@ define(["kinetic"], function (Kinetic) {
     };
 
     this.createPolygon = function (polygon) {
-      return new Kinetic.Polygon(polygon);
+      polygon.closed = true;
+      return new Kinetic.Line(polygon);
     };
 
     this.createPath = function (path) {

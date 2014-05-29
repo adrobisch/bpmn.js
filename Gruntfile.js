@@ -1,8 +1,14 @@
 module.exports = function(grunt) {
-
-  // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec'
+        },
+        src: ['test/mocha/**/*.js']
+      }
+    },
     connect: {
       server: {
         options: {
@@ -12,8 +18,14 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: 'src/**/*',
-      tasks: ['requirejs']
+      scripts: {
+        files: ['src/**/*', 'example.html'],
+        tasks: ['urequire:combined', 'requirejs']
+      },
+      tests: {
+        files: ['test/**/*', 'example.html'],
+        tasks: ['urequire:combined', 'mochaTest']
+      }
     },
     uglify: {
       options : {
@@ -24,8 +36,8 @@ module.exports = function(grunt) {
       compile: {
         options: {
           paths: {
-            "sax": 'lib/sax',
-            "kinetic":  'lib/kinetic'
+            "sax": '../node_modules/sax/lib/sax',
+            "kinetic":  '../node_modules/kinetic/kinetic'
           },
           shim: {
             "sax" : {
@@ -40,8 +52,45 @@ module.exports = function(grunt) {
           packages: [
             { name: "dojo", location: "../node_modules/dojo" },
             { name: "bpmn", location: "bpmn"}],
-          out: "compiled/bpmn.min.js"
+          out: "lib/bpmn.min.js"
         }
+      }
+    },
+
+    urequire: {
+      combined: {
+        template: 'combined',
+        path: "js/",
+        main: 'bpmn/Bpmn',
+        dstPath: "lib/bpmn.combined.js"
+      },
+
+      combined_minified: {
+        template: 'combined',
+        banner: 'bpmnjs, License MIT',
+        path: "js/",
+        main: 'bpmn/Bpmn',
+        dstPath: "lib/bpmn.combined.min.js",
+        optimize: true
+      },
+
+      _defaults: {
+        bundle: {
+          dependencies: {
+            locals: ['dojo', 'sax', 'kinetic'],
+            exports: {
+              bundle: {
+                'sax': 'sax',
+                'kinetic': 'Kinetic'
+              }
+            }
+          }
+        },
+        debugLevel: 0,
+        verbose: false,
+        scanAllow: true,
+        allNodeRequires: true,
+        noRootExports: false
       }
     }
   });
@@ -49,7 +98,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks('grunt-urequire');
 
   grunt.registerTask('server', [ 'connect:server'] );
-  grunt.registerTask('default', ['requirejs']);
+  grunt.registerTask('default', ['urequire:combined', 'mochaTest']);
+  grunt.registerTask('dist', ['default', 'urequire:combined_minified', 'requirejs']);
 };

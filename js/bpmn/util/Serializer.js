@@ -1,4 +1,4 @@
-define(["dojo/_base/declare", "bpmn/Package", "bpmn/Definitions", "sax"], function (declare, Package, Definitions) {
+define(["dojo/_base/declare", "bpmn/Package", "bpmn/Definitions", "bpmn/BaseElement", "sax"], function (declare, Package, Definitions, BaseElement) {
   var serializer = {
     constructor : function () {
     },
@@ -46,7 +46,7 @@ define(["dojo/_base/declare", "bpmn/Package", "bpmn/Definitions", "sax"], functi
         "default": function (node) {
           var parent = parser.stack.peek();
           var tagLookup = node.local.toLowerCase();
-          var newRef = Package.tagMap[tagLookup] ? Package.tagMap[tagLookup]() : new bpmn.BaseElement();
+          var newRef = Package.tagMap[tagLookup] ? Package.tagMap[tagLookup]() : new BaseElement();
           parser.stack.push(newRef);
 
           newRef._definitions = parser.definitions;
