@@ -1,10 +1,17 @@
-define(["dojo/_base/declare", "bpmn/CatchEvent", "bpmn/Package"], function (declare, CatchEvent, Package) {
+define(["bpmn/util/JSClass", "bpmn/CatchEvent", "bpmn/Package"], function (jsclass, CatchEvent, Package) {
   var startEvent = {
     tag : "startEvent",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+    },
+
+    init: function () {
+      this.callSuper();
     }
   };
 
-  return Package.registerClass(declare("bpmn.StartEvent", CatchEvent, startEvent));
+  var StartEventClass = new jsclass.Class(CatchEvent, startEvent);
+  Package.registerClass(StartEventClass);
+  return StartEventClass;
 });

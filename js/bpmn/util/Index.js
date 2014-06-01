@@ -1,6 +1,6 @@
-define(["dojo/_base/declare"], function (declare) {
+define(["bpmn/util/JSClass"], function (jsclass) {
   var index = {
-    constructor : function () {
+    initialize : function () {
       this._ = {};
     },
 
@@ -29,5 +29,5 @@ define(["dojo/_base/declare"], function (declare) {
     }
   };
 
-  return declare("bpmn.util.Index", null, index);
+  return new jsclass.Class(index);
 });

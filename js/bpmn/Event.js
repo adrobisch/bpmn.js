@@ -1,10 +1,17 @@
-define(["dojo/_base/declare", "bpmn/FlowNode", "bpmn/Package"], function (declare, FlowNode, Package) {
+define(["bpmn/util/JSClass", "bpmn/FlowNode", "bpmn/Package"], function (jsclass, FlowNode, Package) {
   var event = {
     tag : "event",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+    },
+
+    init: function () {
+      this.callSuper();
     }
   };
 
-  return Package.registerClass(declare("bpmn.Event", FlowNode, event));
+  var EventClass = new jsclass.Class(FlowNode, event);
+  Package.registerClass(EventClass);
+  return EventClass;
 });

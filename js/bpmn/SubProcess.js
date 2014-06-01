@@ -1,10 +1,19 @@
-define(["dojo/_base/declare", "bpmn/Activity", "bpmn/FlowElementsContainer", "bpmn/Package"], function (declare, Activity, FlowElementsContainer, Package) {
+define(["bpmn/util/JSClass", "bpmn/Activity", "bpmn/FlowElementsContainer", "bpmn/Package"], function (jsclass, Activity, FlowElementsContainer, Package) {
   var subProcess = {
+    include: [FlowElementsContainer],
+
     tag : "subProcess",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+    },
+
+    init: function() {
+      this.callSuper();
     }
   };
 
-  return Package.registerClass(declare("bpmn.SubProcess", [Activity,FlowElementsContainer], subProcess));
+  var SubProcessClass = new jsclass.Class(Activity, subProcess);
+  Package.registerClass(SubProcessClass);
+  return SubProcessClass;
 });

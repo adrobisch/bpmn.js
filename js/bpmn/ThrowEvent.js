@@ -1,10 +1,16 @@
-define(["dojo/_base/declare", "bpmn/Event", "bpmn/Package"], function (declare, Event, Package) {
+define(["bpmn/util/JSClass", "bpmn/Event", "bpmn/Package"], function (jsclass, Event, Package) {
   var throwEvent = {
     tag : "throwEvent",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+    },
+
+    init: function () {
+      this.callSuper();
     }
   };
-
-  return Package.registerClass(declare("bpmn.ThrowEvent", Event, throwEvent));
+  var ThrowEventClass = new jsclass.Class(Event, throwEvent);
+  Package.registerClass(ThrowEventClass);
+  return ThrowEventClass;
 });

@@ -1,9 +1,13 @@
-define(["dojo/_base/declare", "bpmn/BaseElement", "bpmn/FlowElement"], function (declare, BaseElement, FlowElement) {
+define(["bpmn/util/JSClass", "bpmn/BaseElement", "bpmn/FlowElement"], function (jsclass, BaseElement, FlowElement) {
   var flowElementsContainer = {
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
       this.addReference({ name : "flowElements", containment : true, type : FlowElement});
+    },
+    init: function () {
+      this.callSuper();
     }
   };
 
-  return declare("bpmn.FlowElementsContainer", BaseElement, flowElementsContainer);
+  return new jsclass.Module(flowElementsContainer);
 });

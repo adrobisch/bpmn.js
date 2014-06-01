@@ -1,9 +1,14 @@
-define(["dojo/_base/declare", "bpmn/BaseElement"], function (declare, BaseElement) {
+define(["bpmn/util/JSClass", "bpmn/BaseElement"], function (jsclass, BaseElement) {
   var callableElement = {
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
       this.addAttribute({ name : "name", type : String});
-    }
-  }
+    },
 
-  return declare("bpmn.CallableElement", BaseElement, callableElement);
+    init: function() {
+      this.callSuper();
+    }
+  };
+
+  return new jsclass.Class(BaseElement, callableElement);
 });

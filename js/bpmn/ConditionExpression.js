@@ -1,10 +1,16 @@
-define(["dojo/_base/declare", "bpmn/BaseElement", "bpmn/Package"], function (declare, BaseElement, Package) {
+define(["bpmn/util/JSClass", "bpmn/BaseElement", "bpmn/Package"], function (jsclass, BaseElement, Package) {
   var conditionExpression = {
     tag : "conditionExpression",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+    },
+
+    init: function () {
+      this.callSuper();
     }
   };
-
-  return Package.registerClass(declare("bpmn.ConditionExpression", BaseElement, conditionExpression));
+  var ConditionExpressionClass = new jsclass.Class(BaseElement, conditionExpression);
+  Package.registerClass(ConditionExpressionClass);
+  return ConditionExpressionClass;
 });

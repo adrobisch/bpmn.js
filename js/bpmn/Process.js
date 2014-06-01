@@ -1,11 +1,18 @@
-define(["dojo/_base/declare", "bpmn/CallableElement", "bpmn/FlowElementsContainer", "bpmn/Package"], function (declare, CallableElement, FlowElementsContainer, Package) {
+define(["bpmn/util/JSClass", "bpmn/CallableElement", "bpmn/FlowElementsContainer", "bpmn/Package"], function (jsclass, CallableElement, FlowElementsContainer, Package) {
   var process = {
+    include: [FlowElementsContainer],
+
     tag : "process",
 
-    constructor : function () {
-      this.addAttribute({ name : "isExecutable", containment : true, type : "boolean"});
+    initialize : function () {
+      this.callSuper();
+
+      this.addAttribute({ name : "isExecutable", type : "boolean"});
+      this.addAttribute({ name : "name", type : String});
     }
   };
 
-  return Package.registerClass(declare("bpmn.Process", [FlowElementsContainer, CallableElement], process));
+  var processClass = new jsclass.Class(CallableElement, process);
+
+  return Package.registerClass(processClass);
 });

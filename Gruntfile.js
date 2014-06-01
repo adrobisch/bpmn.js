@@ -18,12 +18,8 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      scripts: {
-        files: ['src/**/*', 'example.html'],
-        tasks: ['urequire:combined', 'requirejs']
-      },
       tests: {
-        files: ['test/**/*', 'example.html'],
+        files: ['js/**/*', 'test/**/*', 'example.html'],
         tasks: ['urequire:combined', 'mochaTest']
       }
     },
@@ -36,21 +32,29 @@ module.exports = function(grunt) {
       compile: {
         options: {
           paths: {
+            "jquery" : "../node_modules/jquery/dist/jquery.min",
+            "lodash" : "../node_modules/lodash/lodash",
             "sax": '../node_modules/sax/lib/sax',
-            "kinetic":  '../node_modules/kinetic/kinetic'
+            "kinetic": '../node_modules/kinetic/kinetic.min',
+            "bpmn" : "../lib/bpmn.combined"
           },
           shim: {
+            "jquery": {
+              exports: "$"
+            },
+            "lodash" : {
+              exports: "_"
+            },
             "sax" : {
               exports : "sax"
             },
             "kinetic" : {
-              exports : "Kinetic"
+              exports: "Kinetic"
             }
           },
           name : "bpmn/Bpmn",
           baseUrl: "./js",
           packages: [
-            { name: "dojo", location: "../node_modules/dojo" },
             { name: "bpmn", location: "bpmn"}],
           out: "lib/bpmn.min.js"
         }
@@ -77,11 +81,13 @@ module.exports = function(grunt) {
       _defaults: {
         bundle: {
           dependencies: {
-            locals: ['dojo', 'sax', 'kinetic'],
+            locals: ['sax', 'kinetic', 'jquery', 'lodash'],
             exports: {
               bundle: {
                 'sax': 'sax',
-                'kinetic': 'Kinetic'
+                'kinetic': 'Kinetic',
+                'jquery': '$',
+                'lodash': '_'
               }
             }
           }

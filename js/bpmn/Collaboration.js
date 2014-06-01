@@ -1,10 +1,11 @@
-define(["dojo/_base/declare", "bpmn/Package"], function (declare, Package) {
+define(["bpmn/util/JSClass", "bpmn/Package"], function (jsclass, Package) {
   var collaboration = {
     tag : "collaboration",
 
-    constructor : function () {
+    initialize : function () {
     }
   };
-
-  return Package.registerClass(declare("bpmn.Collaboration", null, collaboration));
+  var CollaborationClass = new jsclass.Class(collaboration);
+  Package.registerClass(CollaborationClass);
+  return CollaborationClass;
 });

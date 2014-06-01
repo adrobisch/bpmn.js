@@ -1,10 +1,17 @@
-define(["dojo/_base/declare", "bpmn/Activity", "bpmn/Package"], function (declare, Activity, Package) {
+define(["bpmn/util/JSClass", "bpmn/Activity", "bpmn/Package"], function (jsclass, Activity, Package) {
   var task = {
     tag : "task",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+    },
+
+    init: function() {
+      this.callSuper();
     }
   };
 
-  return Package.registerClass(declare("bpmn.Task", Activity, task));
+  var TaskClass = new jsclass.Class(Activity, task);
+  Package.registerClass(TaskClass);
+  return TaskClass;
 });

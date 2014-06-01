@@ -1,6 +1,6 @@
-define(["dojo/_base/declare", "bpmn/Package", "bpmn/Definitions", "bpmn/BaseElement", "sax"], function (declare, Package, Definitions, BaseElement) {
+define(["bpmn/util/JSClass", "bpmn/Package", "bpmn/Definitions", "bpmn/BaseElement", "sax"], function (jsclass, Package, Definitions, BaseElement) {
   var serializer = {
-    constructor : function () {
+    initialize : function () {
     },
 
     fromXML : function (xmlString) {
@@ -8,7 +8,7 @@ define(["dojo/_base/declare", "bpmn/Package", "bpmn/Definitions", "bpmn/BaseElem
         return;
       }
 
-      var attr = function (attrName, node, bpmnObj, type) {
+      var setAttributeFromNode = function (attrName, node, bpmnObj, type) {
         if (node.attributes[attrName]) {
           var value = node.attributes[attrName].value;
           if (type == "float") {
@@ -37,7 +37,7 @@ define(["dojo/_base/declare", "bpmn/Package", "bpmn/Definitions", "bpmn/BaseElem
         return (this.length == 0) ? null : this[this.length -1];
       };
 
-      var openTag = {
+      var openTagHandlers = {
         "definitions" : function (node) {
           parser.definitions = new Definitions();
           parser.stack.push(parser.definitions);
@@ -46,20 +46,22 @@ define(["dojo/_base/declare", "bpmn/Package", "bpmn/Definitions", "bpmn/BaseElem
         "default": function (node) {
           var parent = parser.stack.peek();
           var tagLookup = node.local.toLowerCase();
-          var newRef = Package.tagMap[tagLookup] ? Package.tagMap[tagLookup]() : new BaseElement();
+          var PackageClass = Package.tagMap[tagLookup];
+
+          var newRef = PackageClass ? new PackageClass(): new BaseElement();
           parser.stack.push(newRef);
 
           newRef._definitions = parser.definitions;
 
           for (var attributeName in newRef.attribute) {
-            attr(attributeName, node, newRef, newRef.attribute[attributeName].type);
+            setAttributeFromNode(attributeName, node, newRef, newRef.attribute[attributeName].type);
           }
 
           var refFound = null;
           for (var index in parent.reference) {
             var ref = parent.reference[index];
 
-            if(newRef.isInstanceOf(ref.type)) {
+            if(newRef.isA(ref.type)) {
               refFound = ref;
               break;
             }
@@ -81,10 +83,10 @@ define(["dojo/_base/declare", "bpmn/Package", "bpmn/Definitions", "bpmn/BaseElem
       };
 
       parser.onopentag = function (node) {
-        if (openTag[node.local]) {
-          openTag[node.local](node);
+        if (openTagHandlers[node.local]) {
+          openTagHandlers[node.local](node);
         }else {
-          openTag["default"](node);
+          openTagHandlers["default"](node);
         }
       };
 
@@ -107,5 +109,5 @@ define(["dojo/_base/declare", "bpmn/Package", "bpmn/Definitions", "bpmn/BaseElem
     }
   }
 
-  return declare("bpmn.util.Serializer", null, serializer);
+  return new jsclass.Class(serializer);
 });

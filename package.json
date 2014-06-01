@@ -2,10 +2,11 @@
   "name": "bpmn.js",
   "version": "0.3.0",
   "dependencies" : {
-    "sax" : "~0.6",
+    "lodash": "~2.4",
+    "sax": "~0.6",
+    "fabric": "~1.4",
     "kinetic": "5.0.6",
-    "dojo" : "1.9.1",
-    "requirejs" : "2.1.13"
+    "requirejs": "2.1.13"
   },
   "devDependencies": {
     "grunt": "~0.4",
@@ -17,8 +18,8 @@
     "jquery": "~2.1",
     "mocha": "~1.20",
     "chai": "~1.9",
+    "sinon": "~1.10",
     "canvas": "~1.1",
-    "jsdom": "~0.10",
-    "amdefine": ">=0.1.0"
+    "jsdom": "~0.10"
   }
 }

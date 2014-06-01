@@ -1,10 +1,10 @@
 define([
-  "dojo/_base/declare",
+  "bpmn/util/JSClass",
+  "bpmn/util/Index",
   "bpmn/BaseElement",
   "bpmn/Process",
   "bpmn/Collaboration",
   "bpmn/di/BPMNDiagram",
-  "bpmn/util/Index",
   "bpmn/StartEvent",
   "bpmn/EndEvent",
   "bpmn/BoundaryEvent",
@@ -16,20 +16,21 @@ define([
   "bpmn/ExclusiveGateway",
   "bpmn/ParallelGateway",
   "bpmn/SequenceFlow"
-], function (declare, BaseElement, Process, Collaboration, BPMNDiagram, Index) {
+], function (jsclass, Index, BaseElement, Process, Collaboration, BPMNDiagram) {
   var definitions = {
 
     tag : "definitions",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+
       this.addReference({name : "collaboration", type : Collaboration});
       this.addReference({name : "process",  containment : true, type : Process});
       this.addReference({name : "bpmnDiagram", type : BPMNDiagram});
 
       this.index = new Index();
     }
-
   };
 
-  return declare("bpmn.Defintions", BaseElement, definitions);
+  return new jsclass.Class(BaseElement, definitions);
 });

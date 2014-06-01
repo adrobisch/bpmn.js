@@ -1,7 +1,7 @@
-define(["dojo/_base/declare", "dojo/_base/lang"], function (declare, l) {
+define(["bpmn/util/JSClass"], function (jsclass) {
 
   var clazz = {
-    constructor : function (obj) {
+    initialize : function () {
 
       this.text = null;
 
@@ -14,10 +14,6 @@ define(["dojo/_base/declare", "dojo/_base/lang"], function (declare, l) {
        a attribute is a object: {name : string, class : constructor}
        */
       this.attribute = {};
-
-      if (obj) {
-        l.mixin(this, obj);
-      }
 
     },
 
@@ -62,5 +58,5 @@ define(["dojo/_base/declare", "dojo/_base/lang"], function (declare, l) {
     }
   };
 
-  return declare("bpmn.Clazz", null, clazz);
+  return new jsclass.Class(clazz);
 });

@@ -1,12 +1,20 @@
-define(["dojo/_base/declare", "bpmn/di/DiagramElement", "bpmn/di/Waypoint", "bpmn/Package"], function (declare, DiagramElement, Waypoint, Package) {
+define(["bpmn/util/JSClass", "bpmn/di/DiagramElement", "bpmn/di/Waypoint", "bpmn/Package"], function (jsclass, DiagramElement, Waypoint, Package) {
   var BPMNEdge = {
     tag : "BPMNEdge",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+
       this.addReference({ name : "waypoints", containment: true, type : Waypoint});
+    },
+
+    init: function () {
+      this.callSuper();
     }
 
   };
 
-  return Package.registerClass(declare("bpmn.BPMNEdge", DiagramElement, BPMNEdge));
+  var BPMNEdgeClass = new jsclass.Class(DiagramElement, BPMNEdge);
+  Package.registerClass(BPMNEdgeClass);
+  return BPMNEdgeClass;
 });

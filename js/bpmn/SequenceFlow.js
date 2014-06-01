@@ -1,8 +1,10 @@
-define(["dojo/_base/declare", "bpmn/FlowElement", "bpmn/ConditionExpression", "bpmn/Package"], function (declare, FlowElement, ConditionExpression, Package) {
+define(["bpmn/util/JSClass", "bpmn/FlowElement", "bpmn/ConditionExpression", "bpmn/Package"], function (jsclass, FlowElement, ConditionExpression, Package) {
   var sequenceFlow = {
     tag : "sequenceFlow",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+
       this.addAttribute({ name : "sourceRef", type : String});
       this.addAttribute({ name : "targetRef", type : String});
       this.addReference({name : "conditionExpression", type : ConditionExpression});
@@ -17,7 +19,12 @@ define(["dojo/_base/declare", "bpmn/FlowElement", "bpmn/ConditionExpression", "b
     },
 
     init : function () {
-      this.inherited(arguments);
+      this.callSuper();
+
+      if (!this._definitions.index.addArray) {
+        console.log("cant addArray" + this.id());
+        console.log(this._definitions.index.tag);
+      }
 
       this._definitions.index.addArray("target:"+this.targetRef(), this);
       this._definitions.index.addArray("source:"+this.sourceRef(), this);
@@ -25,5 +32,7 @@ define(["dojo/_base/declare", "bpmn/FlowElement", "bpmn/ConditionExpression", "b
 
   };
 
-  return Package.registerClass(declare("bpmn.SequenceFlow", FlowElement, sequenceFlow));
+  var SequenceFlowClass = new jsclass.Class(FlowElement, sequenceFlow);
+  Package.registerClass(SequenceFlowClass);
+  return SequenceFlowClass;
 });

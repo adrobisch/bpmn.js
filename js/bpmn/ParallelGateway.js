@@ -1,10 +1,17 @@
-define(["dojo/_base/declare", "bpmn/Gateway", "bpmn/Package"], function (declare, Gateway, Package) {
+define(["bpmn/util/JSClass", "bpmn/Gateway", "bpmn/Package"], function (jsclass, Gateway, Package) {
   var parallelGateway = {
     tag : "parallelGateway",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+    },
+
+    init: function() {
+      this.callSuper();
     }
   };
 
-  return Package.registerClass(declare("bpmn.ParallelGateway", Gateway, parallelGateway));
+  var ParallelGatewayClass = new jsclass.Class(Gateway, parallelGateway);
+  Package.registerClass(ParallelGatewayClass);
+  return ParallelGatewayClass;
 });

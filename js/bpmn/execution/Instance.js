@@ -1,4 +1,4 @@
-define(["bpmn/execution/TokenStore", "dojo/_base/declare", "dojo/_base/array", "dojo/_base/lang", "dojo/Deferred", "dojo/topic"], function (TokenStore, declare, array, l, Deferred, topic) {
+define(["bpmn/execution/TokenStore", "bpmn/util/JSClass", "lodash", "jquery", "bpmn/util/Topic"], function (TokenStore, jsclass, _, $, topic) {
 
   var instance = {
 
@@ -37,7 +37,7 @@ define(["bpmn/execution/TokenStore", "dojo/_base/declare", "dojo/_base/array", "
 
         var transition = null;
 
-        array.map(element.outgoing(), function (outgoing) {
+        _.map(element.outgoing(), function (outgoing) {
           var flowConfig = this.configuration[outgoing.id()];
 
           if (!transition && flowConfig && flowConfig(this)) {
@@ -59,7 +59,7 @@ define(["bpmn/execution/TokenStore", "dojo/_base/declare", "dojo/_base/array", "
         var fromMap = {};
 
         if (element.incoming().length == 1) {
-          return l.hitch(this, this.behaviours.takeAll)(element);
+          return _.bind(this.behaviours.takeAll, this)(element);
         }
 
         for (var index = 0; index < tokens.length; index++) {
@@ -69,7 +69,7 @@ define(["bpmn/execution/TokenStore", "dojo/_base/declare", "dojo/_base/array", "
 
         var activeTransitions = [];
 
-        array.map(element.incoming(), function (incoming) {
+        _.map(element.incoming(), function (incoming) {
 
           if (!fromMap[incoming.id()]) {
             isActive = false;
@@ -80,11 +80,11 @@ define(["bpmn/execution/TokenStore", "dojo/_base/declare", "dojo/_base/array", "
         }, this);
 
         if (isActive) {
-          array.map(activeTransitions, function (t) {
-            l.hitch(this, this.dropToken)(t.sourceRef(), this.tokenStore);
+          _.map(activeTransitions, function (t) {
+            _.bind(this.dropToken, this)(t.sourceRef(), this.tokenStore);
           }, this);
 
-          return l.hitch(this, this.behaviours.takeAll)(element);
+          return _.bind(this.behaviours.takeAll, this)(element);
         }else {
           return [];
         }
@@ -114,15 +114,15 @@ define(["bpmn/execution/TokenStore", "dojo/_base/declare", "dojo/_base/array", "
     trigger : function (elementId, variables, behaviour, path) {
       console.log("trigger", elementId);
 
-      var deferred = new Deferred();
-      var path = path ? path : new Deferred();
+      var deferred = $.Deferred();
+      var path = path ? path : $.Deferred();
 
       this.copyVariables(variables);
 
       var node = this.definitions.index.item(elementId);
       var nodeBehaviour = behaviour ? this.behaviours[behaviour] : this.behaviours[node.declaredClass];
 
-      var transitions = [].concat(l.hitch(this, nodeBehaviour) (node, this.tokenStore) );
+      var transitions = [].concat(_.bind(nodeBehaviour, this) (node, this.tokenStore) );
       console.log("next", transitions);
 
       if (transitions.length > 0 && this.configuration.leave) {
@@ -153,7 +153,7 @@ define(["bpmn/execution/TokenStore", "dojo/_base/declare", "dojo/_base/array", "
 
       if (this.configuration[elementId] && this.configuration[elementId]) {
         this.configuration[elementId]({instance : this, promise : deferred});
-      }else {
+      } else {
         console.log("resolving", elementId, this.tokenStore.tokenMap);
         deferred.resolve();
       }
@@ -163,5 +163,5 @@ define(["bpmn/execution/TokenStore", "dojo/_base/declare", "dojo/_base/array", "
 
   };
 
-  return declare("bpmn.Instance", null, instance);
+  return new jsclass.Class(instance);
 });

@@ -1,4 +1,4 @@
-define(["dojo/_base/declare", "dojo/_base/lang"], function (declare, l) {
+define(["bpmn/util/JSClass"], function (jsclass) {
 
   var tokenStore = {
 
@@ -35,5 +35,5 @@ define(["dojo/_base/declare", "dojo/_base/lang"], function (declare, l) {
 
   };
 
-  return declare("bpmn.TokenStore", null, tokenStore);
+  return new jsclass.Class(tokenStore);
 });

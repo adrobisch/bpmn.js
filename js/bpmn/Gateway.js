@@ -1,10 +1,17 @@
-define(["dojo/_base/declare", "bpmn/FlowNode", "bpmn/Package"], function (declare, FlowNode, Package) {
+define(["bpmn/util/JSClass", "bpmn/FlowNode", "bpmn/Package"], function (jsclass, FlowNode, Package) {
   var gateway = {
     tag : "gateway",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+    },
+
+    init: function() {
+      this.callSuper();
     }
   };
 
-  return Package.registerClass(declare("bpmn.Gateway", FlowNode, gateway));
+  var GatewayClass = new jsclass.Class(FlowNode, gateway);
+  Package.registerClass(GatewayClass);
+  return GatewayClass;
 });

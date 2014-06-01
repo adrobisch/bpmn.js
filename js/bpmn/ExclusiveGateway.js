@@ -1,15 +1,17 @@
-define(["dojo/_base/declare", "bpmn/Gateway", "bpmn/Package"], function (declare, Gateway, Package) {
+define(["bpmn/util/JSClass", "bpmn/Gateway", "bpmn/Package"], function (jsclass, Gateway, Package) {
   var exclusiveGateway = {
     tag : "exclusiveGateway",
 
-    constructor : function () {
-      this.addAttribute({ name : "default", type : String});
+    initialize : function () {
+      this.callSuper();
     },
 
-    getDefault : function () {
-      return this._definitions.index.item(this.default());
+    init: function() {
+      this.callSuper();
     }
   };
 
-  return Package.registerClass(declare("bpmn.ExclusiveGateway", Gateway, exclusiveGateway));
+  var ExclusiveGateway = new jsclass.Class(Gateway, exclusiveGateway);
+  Package.registerClass(ExclusiveGateway);
+  return ExclusiveGateway;
 });

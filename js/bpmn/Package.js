@@ -1,12 +1,13 @@
-define(["dojo/_base/declare"], function (declare) {
-  var p = {
+define(["bpmn/util/JSClass"], function (jsclass) {
+  var packageDef = {
     tagMap : {},
 
-    constructor : function () {
+    initialize : function () {
     },
 
     registerClass : function (newClass) {
       var tag = newClass.prototype.tag;
+
       if (tag) {
         this.tagMap[tag.toLowerCase()] = newClass;
       }
@@ -14,6 +15,6 @@ define(["dojo/_base/declare"], function (declare) {
     }
   };
 
-  var Package =  declare("bpmn.Package", null, p);
-  return window.bpmnPackage = new Package();
+  var Package = new jsclass.Class(packageDef);
+  return new Package();
 });

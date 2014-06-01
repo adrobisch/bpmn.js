@@ -1,5 +1,5 @@
-define(["dojo/_base/declare",
-        "dojo/_base/array",
+define(["bpmn/util/JSClass",
+        "lodash",
         "bpmn/Activity",
         "bpmn/Gateway",
         "bpmn/Event",
@@ -9,7 +9,7 @@ define(["dojo/_base/declare",
         "bpmn/editor/EventRenderer",
         "bpmn/editor/GatewayRenderer",
         "bpmn/editor/LabelRenderer"],
-function (declare, array, Activity, Gateway, Event, SequenceFlow, Canvas, ActivityRenderer, EventRenderer, GatewayRenderer, LabelRenderer) {
+function (jsclass, _, Activity, Gateway, Event, SequenceFlow, Canvas, ActivityRenderer, EventRenderer, GatewayRenderer, LabelRenderer) {
   var Renderer = {
 
     skins: {
@@ -24,7 +24,7 @@ function (declare, array, Activity, Gateway, Event, SequenceFlow, Canvas, Activi
       }
     },
 
-    constructor : function (definitions, options) {
+    initialize : function (definitions, options) {
       this.definitions = definitions;
       this.skinName = "default";
 
@@ -59,8 +59,8 @@ function (declare, array, Activity, Gateway, Event, SequenceFlow, Canvas, Activi
         throw new Error("Only single process models are supported");
       }
 
-      array.forEach(this.definitions.process(), function (process) {
-        array.forEach(process.flowElements(), function (flowElement){
+      _.forEach(this.definitions.process(), function (process) {
+        _.forEach(process.flowElements(), function (flowElement){
           this.renderElement(flowElement);
         }, this);
       }, this);
@@ -118,7 +118,7 @@ function (declare, array, Activity, Gateway, Event, SequenceFlow, Canvas, Activi
     renderConnection: function (connection, group) {
       var joinedPoints = [];
 
-      array.forEach(connection.getWaypoints(), function (point){
+      _.forEach(connection.getWaypoints(), function (point){
         joinedPoints.push(point.x);
         joinedPoints.push(point.y);
       });
@@ -140,5 +140,5 @@ function (declare, array, Activity, Gateway, Event, SequenceFlow, Canvas, Activi
 
   };
 
-  return declare("bpmn.Renderer", null, Renderer);
-})
+  return new jsclass.Class(Renderer);
+});

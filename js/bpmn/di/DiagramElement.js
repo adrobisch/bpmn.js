@@ -1,8 +1,10 @@
-define(["dojo/_base/declare", "bpmn/Clazz", "bpmn/Package"], function (declare, Clazz, Package) {
+define(["bpmn/util/JSClass", "bpmn/Clazz", "bpmn/Package"], function (jsclass, Clazz, Package) {
   var DiagramElement = {
     tag : "diagramElement",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+
       this.addAttribute({ name : "id", type : String});
       this.addAttribute({ name : "bpmnElement", type : String});
     },
@@ -12,6 +14,7 @@ define(["dojo/_base/declare", "bpmn/Clazz", "bpmn/Package"], function (declare, 
     }
 
   };
-
-  return Package.registerClass(declare("bpmn.DiagramElement", Clazz, DiagramElement));
+  var DiagramElementClass = new jsclass.Class(Clazz, DiagramElement);
+  Package.registerClass(DiagramElementClass);
+  return DiagramElementClass;
 });

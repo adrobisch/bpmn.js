@@ -1,8 +1,13 @@
-define(["dojo/_base/declare", "bpmn/BaseElement", "bpmn/Package"], function (declare, BaseElement, Package) {
+define(["bpmn/util/JSClass", "bpmn/BaseElement", "bpmn/Package"], function (jsclass, BaseElement, Package) {
   var flowElement = {
     tag : "flowElement",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+    },
+
+    init: function() {
+      this.callSuper();
     },
 
     getDiagramElement : function () {
@@ -16,8 +21,9 @@ define(["dojo/_base/declare", "bpmn/BaseElement", "bpmn/Package"], function (dec
     getWaypoints : function () {
       return this.getDiagramElement().waypoints();
     }
-
   };
 
-  return Package.registerClass(declare("bpmn.FlowElement", BaseElement, flowElement));
+  var FlowElementClass = new jsclass.Class(BaseElement, flowElement);
+  Package.registerClass(FlowElementClass);
+  return FlowElementClass;
 });

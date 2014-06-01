@@ -1,10 +1,16 @@
-define(["dojo/_base/declare", "bpmn/Clazz", "bpmn/Package"], function (declare, Clazz, Package) {
+define(["bpmn/util/JSClass", "bpmn/Clazz", "bpmn/Package"], function (jsclass, Clazz, Package) {
   var Waypoint = {
     tag : "waypoint",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+
       this.addAttribute({ name : "x", type : "float"});
       this.addAttribute({ name : "y", type : "float"});
+    },
+
+    init: function () {
+      this.callSuper();
     },
 
     __internalFieldName : function (field) {
@@ -12,5 +18,7 @@ define(["dojo/_base/declare", "bpmn/Clazz", "bpmn/Package"], function (declare, 
     }
   };
 
-  return Package.registerClass(declare("bpmn.Waypoint", Clazz, Waypoint));
+  var WaypointClass = new jsclass.Class(Clazz, Waypoint);
+  Package.registerClass(WaypointClass);
+  return WaypointClass;
 });

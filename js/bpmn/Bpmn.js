@@ -1,17 +1,24 @@
 /*! bpmn.js https://github.com/adrobisch/bpmn.js by Andreas Drobisch @adrobisch - MIT License */
 define([
-  "dojo/_base/declare",
+  "bpmn/util/JSClass",
   "bpmn/Definitions",
   "bpmn/execution/Instance",
   "bpmn/util/Serializer",
   "bpmn/editor/Renderer"
-], function (declare, Definitions, Instance, Serializer, Renderer) {
+], function (jsclass, Definitions, Instance, Serializer, Renderer) {
   var bpmn = {
-    constructor : function () {
-      this.renderer = Renderer;
+    initialize: function () {
       this.serializer = new Serializer;
+    },
+
+    renderer: function (definitions, options) {
+      return new Renderer(definitions, options);
+    },
+
+    fromXML: function(bpmnXml) {
+      return this.serializer.fromXML(bpmnXml);
     }
   };
 
-  return declare("bpmn.Bpmn", null, bpmn);
+  return new jsclass.Class(bpmn);
 });

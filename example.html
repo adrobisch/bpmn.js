@@ -10,6 +10,7 @@
         require({
           paths: {
             "jquery" : "node_modules/jquery/dist/jquery.min",
+            "lodash" : "node_modules/lodash/lodash",
             "sax": 'node_modules/sax/lib/sax',
             "kinetic": 'node_modules/kinetic/kinetic.min',
             "bpmn" : "lib/bpmn.combined"
@@ -17,6 +18,9 @@
           shim: {
             "jquery": {
               exports: "$"
+            },
+            "lodash" : {
+              exports: "_"
             },
             "sax" : {
               exports : "sax"
@@ -26,10 +30,7 @@
             },
             "bpmn" : {}
           },
-          baseUrl: "./",
-          packages:[
-            { name: "dojo", location: "node_modules/dojo" }
-          ]
+          baseUrl: "./"
         });
 
       })();

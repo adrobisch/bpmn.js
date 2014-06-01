@@ -1,12 +1,20 @@
-define(["dojo/_base/declare", "bpmn/di/DiagramElement", "bpmn/di/Bounds", "bpmn/Package"], function (declare, DiagramElement, Bounds, Package) {
+define(["bpmn/util/JSClass", "bpmn/di/DiagramElement", "bpmn/di/Bounds", "bpmn/Package"], function (jsclass, DiagramElement, Bounds, Package) {
   var BPMNShape = {
     tag : "BPMNShape",
 
-    constructor : function () {
+    initialize : function () {
+      this.callSuper();
+
       this.addReference({ name : "bounds", type : Bounds});
+    },
+
+    init: function() {
+      this.callSuper();
     }
 
   };
 
-  return Package.registerClass(declare("bpmn.BPMNShape", DiagramElement, BPMNShape));
+  var BPMNShapeClass = new jsclass.Class(DiagramElement, BPMNShape);
+  Package.registerClass(BPMNShapeClass);
+  return BPMNShapeClass;
 });

@@ -1,6 +1,10 @@
-define(["dojo/_base/declare", "bpmn/Clazz", "bpmn/util/Index"], function (declare, Clazz) {
+define(["bpmn/util/JSClass", "bpmn/Clazz"], function (jsclass, Clazz) {
   var baseElement = {
-    constructor : function () {
+    tag: "baseElement",
+
+    initialize : function () {
+      this.callSuper();
+
       this.addReference({ name : "documentation", type : function Documentation () {}});
       this.addAttribute({ name : "id", type : String});
       this.addAttribute({ name : "name", type : String});
@@ -13,11 +17,13 @@ define(["dojo/_base/declare", "bpmn/Clazz", "bpmn/util/Index"], function (declar
       this.id(uuid);
     },
 
-    init : function () {
-      this._definitions.index.add(this.id(), this);
-      this._definitions.index.addMap(this.declaredClass, this.id(), this);
-    }
-  }
+    init : function() {
+      var id = this.id();
 
-  return declare("bpmn.BaseElement", Clazz, baseElement);
+      this._definitions.index.add(id, this);
+      this._definitions.index.addMap(this.declaredClass, id, this);
+    }
+  };
+
+  return new jsclass.Class(Clazz, baseElement);
 });
