@@ -12,11 +12,15 @@ Development
 ===========
 
 Run
+```
     grunt watch:tests
+```   
 to start the server side mocha tests and have grunt re-run them on changes.
 
 Run
+```
     grunt dist
+```    
 to update both combined (AMD + nodejs) and requirejs-only flavors in the `lib` folder
 
 License
