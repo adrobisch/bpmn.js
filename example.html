@@ -1,9 +1,13 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-  "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
   <head>
     <title>bpmn.js example</title>
-
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
     <script src="node_modules/requirejs/require.js"></script>
     <script>
       (function() {
@@ -12,7 +16,7 @@
             "jquery" : "node_modules/jquery/dist/jquery.min",
             "lodash" : "node_modules/lodash/lodash",
             "sax": 'node_modules/sax/lib/sax',
-            "kinetic": 'node_modules/kinetic/kinetic.min',
+            "fabric": 'node_modules/fabric/dist/fabric',
             "bpmn" : "lib/bpmn.combined"
           },
           shim: {
@@ -25,12 +29,10 @@
             "sax" : {
               exports : "sax"
             },
-            "kinetic" : {
-              exports: "Kinetic"
-            },
-            "bpmn" : {}
-          },
-          baseUrl: "./"
+            "fabric" : {
+              exports: "fabric"
+            }
+          }
         });
 
       })();
@@ -43,13 +45,13 @@
 
           $.get("test/data/test-and.bpmn", function (bpmnXml) {
               var bpmn = new Bpmn();
-              var definitions = bpmn.serializer.fromXML(bpmnXml);
+              var definitions = bpmn.fromXML(bpmnXml);
               bpmn.renderer(definitions, options).render();
           });
       });
     </script>
   </head>
   <body>
-    <div id="example"></div>
+    <canvas id="example"></canvas>
   </body>
 </html>

@@ -1,79 +1,151 @@
-define(["kinetic"], function (Kinetic) {
+define(["fabric", "lodash"], function (fabric, _) {
   var Canvas = function Canvas(options) {
     this.scale = options.scale;
-    var stage = this.stage = new Kinetic.Stage({
-      container: options.container,
-      width: options.width ? options.width : 500,
-      height: options.height ? options.height :  500
-    });
-    stage.scale({ x: this.scale, y: this.scale });
+    var canvas = this.canvas = new fabric.Canvas(options.container);
 
-    this.shapeLayer = new Kinetic.Layer();
-    this.connectionsLayer = new Kinetic.Layer();
-    this.labelLayer = new Kinetic.Layer();
+    var shapeGroup = this.shapeGroup = new fabric.Group([], {left: 0, top: 0})
+        .setOriginX(0).setOriginY(0);
 
-    stage.add(this.shapeLayer);
-    stage.add(this.connectionsLayer);
-    stage.add(this.labelLayer);
+    shapeGroup.setScaleX(this.scale);
+    shapeGroup.setScaleY(this.scale);
 
-    this.createGroup = function (group) {
-      return new Kinetic.Group(group);
+    canvas.add(shapeGroup);
+
+    var connectionGroup = this.connectionGroup = new fabric.Group([], {})
+        .setOriginX(0).setOriginY(0);
+
+    connectionGroup.setScaleX(this.scale);
+    connectionGroup.setScaleY(this.scale);
+
+    canvas.add(connectionGroup);
+
+    this.draw = function() {
+      this.canvas.renderAll();
+    };
+
+    this.addShape = function(shape) {
+      shapeGroup.add(shape);
+    };
+
+    this.addConnection = function(connection) {
+      connectionGroup.add(connection);
+    };
+
+    this.createGroup = function (groupOptions) {
+      return new fabric.Group([], {top: 0, left: 0, width: 0, height: 0})
+          .setOriginX(0).setOriginY(0);
     };
 
     this.createRect = function (rect) {
-      return new Kinetic.Rect(rect);
+      return new fabric.Rect({
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height,
+        fill: rect.fill,
+        stroke: rect.stroke,
+        strokeWidth: rect.strokeWidth,
+        padding: 0,
+        rx: rect.cornerRadius,
+        ry: rect.cornerRadius
+      });
     };
 
     this.createCircle = function (circle) {
-      return new Kinetic.Circle(circle);
-    };
-
-    this.createLine = function (line) {
-      return new Kinetic.Line(line);
+      return new fabric.Circle({
+        radius: circle.width / 2 - circle.strokeWidth,
+        left: 0,
+        top: 0,
+        fill: circle.fill,
+        stroke: circle.stroke,
+        strokeWidth: circle.strokeWidth
+      });
     };
 
     this.createText = function (text) {
-      return new Kinetic.Text(text);
+      var textProperties = {
+        top: text.top,
+        left: text.left,
+        width: text.width,
+        height: text.height,
+        fontSize: text.fontSize,
+        fontFamily: text.fontFamily
+      };
+
+      var textObj = new fabric.Text(text.text, textProperties);
+      return textObj;
     };
 
     this.createPolygon = function (polygon) {
-      polygon.closed = true;
-      return new Kinetic.Line(polygon);
+      var polygonProperties = {
+        top: 0,
+        left: 0,
+        fill: polygon.fill,
+        stroke: polygon.stroke,
+        strokeWidth: polygon.strokeWidth
+      };
+      return new fabric.Polygon(polygon.points, polygonProperties);
     };
 
-    this.createPath = function (path) {
-      return new Kinetic.Path(path);
+    this.createPath = function (pathProperties) {
+      var path = new fabric.Path(pathProperties.data);
+      path.set({ left: 0, top: 0 });
+      return path;
     };
 
     this.createArrowLine = function (points, lineOptions, size){
-      var headlen = size ? size : 6;
+      var arrowSize = size ? size : 8;
 
-      var lastx = points[points.length-2];
-      var lasty = points[points.length-1];
+      var last = points[points.length-1];
+      var secondLast = points[points.length-2];
 
-      var secondlastx = points[points.length-4];
-      var secondlasty = points[points.length-3];
+      var angle = Math.atan2(last.y - secondLast.y, last.x - secondLast.x);
 
-      var angle = Math.atan2(lasty-secondlasty,lastx-secondlastx);
-      lineOptions.points = points.concat([lastx-headlen*Math.cos(angle-Math.PI/6),lasty-headlen*Math.sin(angle-Math.PI/6),lastx, lasty, lastx-headlen*Math.cos(angle+Math.PI/6),lasty-headlen*Math.sin(angle+Math.PI/6)]);
+      var firstArrowPoint = {x: last.x - arrowSize * Math.cos(angle-Math.PI/6), y: last.y - arrowSize * Math.sin(angle-Math.PI/6)};
 
-      var line = new Kinetic.Line(lineOptions);
-      return line;
+      var arrowPoints = [
+          firstArrowPoint,
+          {x: last.x, y: last.y},
+          {x: last.x-arrowSize * Math.cos(angle+Math.PI/6), y: last.y - arrowSize * Math.sin(angle+Math.PI/6)}];
+
+      var linePoints = points.concat(arrowPoints);
+      var lineGroup = new fabric.Group([], {});
+
+      var previous = null;
+
+      _.forEach(linePoints, function (point, index) {
+        if (index == 0) {
+          previous = point;
+          return;
+        }
+
+        var line = new fabric.Line([previous.x, previous.y, point.x, point.y], {
+          stroke: lineOptions.stroke,
+          fill: 'white',
+          strokeWidth: lineOptions.strokeWidth
+        });
+
+        lineGroup.add(line);
+        previous = point;
+      });
+
+      return lineGroup;
     };
 
     this.expandCanvasIfNeeded = function (shape) {
       // buffer for strokes etc
       var buffer = 10;
-      var x = shape.getX(), y = shape.getY(), width = shape.getWidth(), height = shape.getHeight();
+      var x = shape.getLeft(), y = shape.getTop(), width = shape.getWidth(), height = shape.getHeight();
 
-      if ((x + width) * this.scale > this.stage.getWidth()) {
+      if ((x + width) * this.scale > this.canvas.getWidth()) {
 
-        this.stage.setWidth((x+width+buffer)*this.scale);
+        this.canvas.setWidth((x+width+buffer)*this.scale);
       }
 
-      if ((y + height) * this.scale > this.stage.getHeight()) {
-        this.stage.setHeight((y+height+buffer)*this.scale);
+      if ((y + height) * this.scale > this.canvas.getHeight()) {
+        this.canvas.setHeight((y+height+buffer)*this.scale);
       }
+      this.canvas.calcOffset();
     };
 
   };

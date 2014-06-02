@@ -1,15 +1,30 @@
-define([], function () {
-  var EventRenderer = function () {
+define(["lodash", "bpmn/EndEvent"], function (_, EndEvent) {
+  var EventRenderer = function (renderer) {
+    this.typeProperties = function (event) {
+      if (event instanceof EndEvent) {
+        return {
+          strokeWidth: 4
+        }
+      }
+      return {};
+    };
+
     this.render = function (event, group) {
       var bounds = event.getBounds();
-      var circle = this.canvas.createCircle({
+
+      var eventProperties = {
+        left: 0,
+        top: 0,
         width: bounds.width(),
         height: bounds.height(),
-        stroke: this.skin()["event_stroke"],
-        strokeWidth: 2,
-        draggable: true
-      });
+        fill: renderer.skin()["event_fill"],
+        stroke: renderer.skin()["event_stroke"],
+        strokeWidth: 2
+      };
 
+      _.extend(eventProperties, this.typeProperties(event));
+
+      var circle = renderer.canvas.createCircle(eventProperties);
       group.add(circle);
       return group;
     };

@@ -35,7 +35,7 @@ module.exports = function(grunt) {
             "jquery" : "../node_modules/jquery/dist/jquery.min",
             "lodash" : "../node_modules/lodash/lodash",
             "sax": '../node_modules/sax/lib/sax',
-            "kinetic": '../node_modules/kinetic/kinetic.min',
+            "fabric": '../node_modules/fabric/dist/fabric',
             "bpmn" : "../lib/bpmn.combined"
           },
           shim: {
@@ -48,8 +48,8 @@ module.exports = function(grunt) {
             "sax" : {
               exports : "sax"
             },
-            "kinetic" : {
-              exports: "Kinetic"
+            "fabric" : {
+              exports: "fabric"
             }
           },
           name : "bpmn/Bpmn",
@@ -81,13 +81,13 @@ module.exports = function(grunt) {
       _defaults: {
         bundle: {
           dependencies: {
-            locals: ['sax', 'kinetic', 'jquery', 'lodash'],
+            locals: ['sax', 'jquery', 'lodash', 'fabric'],
             exports: {
               bundle: {
                 'sax': 'sax',
-                'kinetic': 'Kinetic',
                 'jquery': '$',
-                'lodash': '_'
+                'lodash': '_',
+                'fabric': 'fabric'
               }
             }
           }

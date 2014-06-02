@@ -11,6 +11,9 @@ Check the `example.html` for a requirejs based setup of bpmn.js
 Development
 ===========
 
+Since `node-canvas` is a dev dependency, you should meet its requirements before `npm install`.
+Check the corresponding [wiki](https://github.com/LearnBoost/node-canvas/wiki).
+
 Run
 ```
     grunt watch:tests

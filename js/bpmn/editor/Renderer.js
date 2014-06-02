@@ -14,10 +14,14 @@ function (jsclass, _, Activity, Gateway, Event, SequenceFlow, Canvas, ActivityRe
 
     skins: {
       "default": {
+        "sequence_flow_stroke": 'black',
         "event_stroke" : 'black',
+        "event_fill" : 'white',
         "activity_stroke" : 'black',
         "activity_fill" : 'white',
         "activity_corner_radius" : 10,
+        "gateway_stroke" : 'black',
+        "gateway_fill" : 'white',
         "label_font_family" : "Arial",
         "label_font_size" : 12,
         "label_fill" :  "black"
@@ -35,8 +39,8 @@ function (jsclass, _, Activity, Gateway, Event, SequenceFlow, Canvas, ActivityRe
 
     bindDelegates : function () {
       this.activity = new ActivityRenderer(this);
-      this.renderEvent = new EventRenderer().render;
-      this.renderGateway = new GatewayRenderer().render;
+      this.event = new EventRenderer(this);
+      this.gateway = new GatewayRenderer(this);
       this.label = new LabelRenderer(this);
     },
 
@@ -48,10 +52,7 @@ function (jsclass, _, Activity, Gateway, Event, SequenceFlow, Canvas, ActivityRe
 
     render :  function () {
       this.renderElements();
-
-      this.canvas.shapeLayer.draw();
-      this.canvas.connectionsLayer.draw();
-      this.canvas.labelLayer.draw();
+      this.canvas.draw();
     },
 
     renderElements : function () {
@@ -74,21 +75,22 @@ function (jsclass, _, Activity, Gateway, Event, SequenceFlow, Canvas, ActivityRe
 
       if (element instanceof SequenceFlow) {
         this.renderConnection(element, group);
-        this.canvas.connectionsLayer.add(group);
+        this.canvas.addConnection(group);
       }
       else if (element instanceof Activity) {
-        this.label.renderCentered(element.getBounds(), this.activity.render(element, group), element.name());
-        this.canvas.shapeLayer.add(group);
+        var activityGroup = this.activity.render(element, group);
+        this.label.renderCentered(element.getBounds(), activityGroup, element.name());
+        this.canvas.addShape(group);
         this.setGroupBounds(group, element.getBounds());
       }
       else if (element instanceof Event) {
-        this.renderEvent(element, group);
-        this.canvas.shapeLayer.add(group);
+        this.event.render(element, group);
+        this.canvas.addShape(group);
         this.setGroupBounds(group, this.eventBounds(element));
       }
       else if (element instanceof Gateway) {
-        this.renderGateway(element, group);
-        this.canvas.shapeLayer.add(group);
+        this.gateway.render(element, group);
+        this.canvas.addShape(group);
         this.setGroupBounds(group, element.getBounds());
       }
       else {
@@ -101,30 +103,29 @@ function (jsclass, _, Activity, Gateway, Event, SequenceFlow, Canvas, ActivityRe
     eventBounds: function (eventElement) {
       var bounds = eventElement.getBounds();
       return {
-        x: function () {return bounds.x() + bounds.width() / 2 },
-        y: function () {return bounds.y() + bounds.height() / 2},
+        x: function () {return bounds.x() },
+        y: function () {return bounds.y() },
         width: function () {return bounds.width()},
         height: function () {return bounds.height()}
       };
     },
 
-    setGroupBounds : function (group, bounds) {
-      group.setX(bounds.x());
-      group.setY(bounds.y());
-      group.setWidth(bounds.width());
-      group.setHeight(bounds.height());
+    setGroupBounds : function (group, bounds, offset) {
+      var offset = offset ? offset: 0;
+
+      var coords = {
+        left: bounds.x() + offset,
+        top: bounds.y() + offset,
+        width: bounds.width(),
+        height: bounds.height()
+      };
+
+      group.set(coords).setCoords();
     },
 
     renderConnection: function (connection, group) {
-      var joinedPoints = [];
-
-      _.forEach(connection.getWaypoints(), function (point){
-        joinedPoints.push(point.x);
-        joinedPoints.push(point.y);
-      });
-
-      var arrow = this.canvas.createArrowLine(joinedPoints, {
-        stroke: 'black',
+      var arrow = this.canvas.createArrowLine(connection.getWaypoints(), {
+        stroke: this.skin()["sequence_flow_stroke"],
         strokeWidth: 2,
         lineCap: 'round',
         lineJoin: 'round'

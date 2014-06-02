@@ -1,11 +1,14 @@
 {
   "name": "bpmn.js",
   "version": "0.3.0",
+  "description": "A implementation of the BPMN 2.0 Metamodel in JavaScript including rendering and execution support",
+  "homepage": "https://github.com/adrobisch/bpmn.js",
+  "license": "MIT",
+  "main": "lib/bpmn.combined.js",
   "dependencies" : {
     "lodash": "~2.4",
     "sax": "~0.6",
     "fabric": "~1.4",
-    "kinetic": "5.0.6",
     "requirejs": "2.1.13"
   },
   "devDependencies": {
