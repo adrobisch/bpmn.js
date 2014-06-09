@@ -1,10 +1,10 @@
-define(["bpmn/execution/TokenStore", "bpmn/util/JSClass", "lodash", "jquery", "bpmn/util/Topic"], function (TokenStore, jsclass, _, $, Topic) {
+define(["bpmn/execution/TokenStore", "bpmn/util/JSClass", "lodash", "q", "bpmn/util/Topic"], function (TokenStore, jsclass, _, Q, Topic) {
 
   var instance = {
 
     initialize : function (definitions, configuration, tokenMap, variables) {
       this.definitions = definitions;
-      this.configuration = configuration;
+      this.configuration = configuration || {};
       this.tokenStore = new TokenStore(tokenMap);
       this.variables = variables ? variables : {};
       this.topic = new Topic();
@@ -115,8 +115,8 @@ define(["bpmn/execution/TokenStore", "bpmn/util/JSClass", "lodash", "jquery", "b
     trigger : function (elementId, variables, behaviour, path) {
       console.log("trigger", elementId);
 
-      var deferred = $.Deferred();
-      var path = path ? path : $.Deferred();
+      var deferred = Q.defer();
+      var path = path ? path : Q.defer();
 
       this.copyVariables(variables);
 
@@ -146,7 +146,7 @@ define(["bpmn/execution/TokenStore", "bpmn/util/JSClass", "lodash", "jquery", "b
         }
 
         var self = this;
-        deferred.then(function () {
+        deferred.promise.then(function () {
           console.log("then for", transition.id());
           self.trigger(transition.targetRef(), null, null, path);
         });
@@ -159,7 +159,7 @@ define(["bpmn/execution/TokenStore", "bpmn/util/JSClass", "lodash", "jquery", "b
         deferred.resolve();
       }
 
-      return path;
+      return path.promise;
     }
 
   };

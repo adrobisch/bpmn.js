@@ -19,6 +19,7 @@ module.exports = function(config) {
       "node_modules/lodash/lodash.js",
       "node_modules/sax/lib/sax.js",
       "node_modules/fabric/dist/fabric.js",
+      "node_modules/q/q.js",
       "lib/bpmn.combined.js",
 
       "test/util/Assertions.js",
@@ -67,7 +68,6 @@ module.exports = function(config) {
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: ['PhantomJS'],
-
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits

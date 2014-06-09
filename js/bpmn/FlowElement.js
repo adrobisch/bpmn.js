@@ -18,6 +18,10 @@ define(["bpmn/util/JSClass", "bpmn/BaseElement", "bpmn/Package"], function (jscl
       return this.getDiagramElement().bounds();
     },
 
+    getLabel: function() {
+      return this.getDiagramElement().label();
+    },
+
     getWaypoints : function () {
       return this.getDiagramElement().waypoints();
     }

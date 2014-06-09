@@ -1,4 +1,4 @@
-define(["bpmn/util/JSClass", "bpmn/di/DiagramElement", "bpmn/di/Bounds", "bpmn/Package"], function (jsclass, DiagramElement, Bounds, Package) {
+define(["bpmn/util/JSClass", "bpmn/di/DiagramElement", "bpmn/di/Bounds", "bpmn/di/BPMNLabel", "bpmn/Package"], function (jsclass, DiagramElement, Bounds, BPMNLabel, Package) {
   var BPMNShape = {
     tag : "BPMNShape",
 
@@ -6,6 +6,7 @@ define(["bpmn/util/JSClass", "bpmn/di/DiagramElement", "bpmn/di/Bounds", "bpmn/P
       this.callSuper();
 
       this.addReference({ name : "bounds", type : Bounds});
+      this.addReference({ name : "label", type : BPMNLabel});
     },
 
     init: function() {

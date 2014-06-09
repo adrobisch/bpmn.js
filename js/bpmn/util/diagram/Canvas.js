@@ -1,7 +1,19 @@
 define(["fabric", "lodash"], function (fabric, _) {
+
+  if (__isNode) {
+    fabric = fabric.fabric;
+  }
+
   var Canvas = function Canvas(options) {
     this.scale = options.scale;
-    var canvas = this.canvas = new fabric.Canvas(options.container);
+
+    var canvas = null;
+
+    if (__isNode) {
+      canvas = this.canvas = fabric.createCanvasForNode(1000, 1000);
+    } else {
+      canvas = this.canvas = new fabric.Canvas(options.container);
+    }
 
     var shapeGroup = this.shapeGroup = new fabric.Group([], {left: 0, top: 0})
         .setOriginX(0).setOriginY(0);
@@ -32,6 +44,8 @@ define(["fabric", "lodash"], function (fabric, _) {
     };
 
     this.createGroup = function (groupOptions) {
+      // FIXME create a group which acts like that: http://jsfiddle.net/fabricjs/2Y587/
+      // problem is https://github.com/kangax/fabric.js/issues/485
       return new fabric.Group([], {top: 0, left: 0, width: 0, height: 0})
           .setOriginX(0).setOriginY(0);
     };

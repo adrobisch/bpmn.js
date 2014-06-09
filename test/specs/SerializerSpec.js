@@ -25,6 +25,8 @@ describe('Serializer', function(){
       assertElementCount(diagramElements, "BPMNShape", 5);
       assertElementCount(diagramElements, "BPMNEdge", 4);
 
+      console.log(diagramElements[0].label().bounds());
+
       var startEvent = definitions.index.item("_93c466ab-b271-4376-a427-f4c353d55ce8");
       should.exist(startEvent);
       should.exist(startEvent.getBounds());
@@ -32,6 +34,10 @@ describe('Serializer', function(){
       assert.equal(startEvent.getBounds().y(), 336.0);
       assert.equal(startEvent.getBounds().width(), 30.0);
       assert.equal(startEvent.getBounds().height(), 30.0);
+      assert.equal(startEvent.getLabel().bounds().x(), 153.67766754457273);
+      assert.equal(startEvent.getLabel().bounds().y(), 371.3333333333333);
+      assert.equal(startEvent.getLabel().bounds().width(), 94.93333333333335);
+      assert.equal(startEvent.getLabel().bounds().height(), 12.804751171875008);
     }));
 
     it('should deserialize subprocess model', withData("test/data/test-subprocess.bpmn", function(bpmnXml){

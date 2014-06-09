@@ -42,6 +42,7 @@ module.exports = function(grunt) {
             "lodash" : "../node_modules/lodash/lodash",
             "sax": '../node_modules/sax/lib/sax',
             "fabric": '../node_modules/fabric/dist/fabric',
+            "q": '../node_modules/q/q',
             "bpmn" : "../lib/bpmn.combined"
           },
           shim: {
@@ -56,6 +57,9 @@ module.exports = function(grunt) {
             },
             "fabric" : {
               exports: "fabric"
+            },
+            "q" : {
+              exports: "Q"
             }
           },
           name : "bpmn/Bpmn",
@@ -88,13 +92,14 @@ module.exports = function(grunt) {
       _defaults: {
         bundle: {
           dependencies: {
-            locals: ['sax', 'jquery', 'lodash', 'fabric'],
+            locals: ['sax', 'jquery', 'lodash', 'fabric', 'q'],
             exports: {
               bundle: {
                 'sax': 'sax',
                 'jquery': '$',
                 'lodash': '_',
-                'fabric': 'fabric'
+                'fabric': 'fabric',
+                'q': 'Q'
               }
             }
           }

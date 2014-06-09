@@ -9,7 +9,8 @@
     "lodash": "~2.4",
     "sax": "~0.6",
     "fabric": "~1.4",
-    "requirejs": "2.1.13"
+    "requirejs": "2.1.13",
+    "q": "~1.0"
   },
   "devDependencies": {
     "grunt": "~0.4",

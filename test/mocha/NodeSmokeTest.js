@@ -13,7 +13,8 @@ var chai = require('chai'),
 var _ = require("lodash");
 
 var fs = require("fs"),
-    Bpmn = require("../../lib/bpmn.combined");
+    Bpmn = require("../../lib/bpmn.combined"),
+    canvasOutput = fs.createWriteStream(__dirname + '/canvasOutput.png');
 
 function testDefinitions() {
   var bpmnXml = fs.readFileSync("test/data/test-and.bpmn").toString();
@@ -30,13 +31,13 @@ describe('Bpmn', function () {
     assert.lengthOf(definitions.process(), 1);
   });
 
-  it.skip('should create an instance', function () {
+  it('should create an instance', function () {
     var definitions = testDefinitions();
 
     new Bpmn().instance(definitions).start("StartEvent_1");
   });
 
-  it.skip('should render to file', function () {
+  it('should render to file', function () {
     var definitions = testDefinitions();
 
     var options = {
@@ -44,6 +45,12 @@ describe('Bpmn', function () {
       scale: 1
     };
 
-    new Bpmn().renderer(definitions, options).render();
+    var renderer = new Bpmn().renderer(definitions, options);
+    renderer.render();
+
+    var stream = renderer.canvas.canvas.createPNGStream();
+    stream.on('data', function(chunk) {
+      canvasOutput.write(chunk);
+    });
   });
 });
