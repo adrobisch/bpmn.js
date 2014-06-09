@@ -1,19 +1,20 @@
-define(["bpmn/execution/TokenStore", "bpmn/util/JSClass", "lodash", "jquery", "bpmn/util/Topic"], function (TokenStore, jsclass, _, $, topic) {
+define(["bpmn/execution/TokenStore", "bpmn/util/JSClass", "lodash", "jquery", "bpmn/util/Topic"], function (TokenStore, jsclass, _, $, Topic) {
 
   var instance = {
 
-    constructor : function (definitions, configuration, tokenMap, variables) {
+    initialize : function (definitions, configuration, tokenMap, variables) {
       this.definitions = definitions;
       this.configuration = configuration;
       this.tokenStore = new TokenStore(tokenMap);
       this.variables = variables ? variables : {};
+      this.topic = new Topic();
 
-      this.behaviours["bpmn.StartEvent"] = this.behaviours["takeAll"];
-      this.behaviours["bpmn.EndEvent"] = this.behaviours["takeNone"];
-      this.behaviours["bpmn.UserTask"] = this.behaviours["takeNone"];
-      this.behaviours["bpmn.ServiceTask"] = this.behaviours["takeAll"];
-      this.behaviours["bpmn.ExclusiveGateway"] = this.behaviours["xor"];
-      this.behaviours["bpmn.ParallelGateway"] = this.behaviours["and"];
+      this.behaviours["startEvent"] = this.behaviours["takeAll"];
+      this.behaviours["endEvent"] = this.behaviours["takeNone"];
+      this.behaviours["userTask"] = this.behaviours["takeNone"];
+      this.behaviours["serviceTask"] = this.behaviours["takeAll"];
+      this.behaviours["exclusiveGateway"] = this.behaviours["xor"];
+      this.behaviours["parallelGateway"] = this.behaviours["and"];
     },
 
     behaviours : {
@@ -120,14 +121,14 @@ define(["bpmn/execution/TokenStore", "bpmn/util/JSClass", "lodash", "jquery", "b
       this.copyVariables(variables);
 
       var node = this.definitions.index.item(elementId);
-      var nodeBehaviour = behaviour ? this.behaviours[behaviour] : this.behaviours[node.declaredClass];
-
+      var nodeBehaviour = behaviour ? this.behaviours[behaviour] : this.behaviours[node.tag];
+      console.log("nodeBehaviour", nodeBehaviour);
       var transitions = [].concat(_.bind(nodeBehaviour, this) (node, this.tokenStore) );
       console.log("next", transitions);
 
       if (transitions.length > 0 && this.configuration.leave) {
         this.configuration.leave(node);
-        topic.publish("flow:leave:"+node.id(), node);
+        this.topic.publish("flow:leave:"+node.id(), node);
       }
 
       if (transitions.length == 0) {
@@ -138,7 +139,7 @@ define(["bpmn/execution/TokenStore", "bpmn/util/JSClass", "lodash", "jquery", "b
         this.tokenStore.add(transition.targetRef(), {from : transition.id()});
 
         var pubPath = "flow:enter:"+transition.targetRef();
-        topic.publish(pubPath, transition.getTargetRef());
+        this.topic.publish(pubPath, transition.getTargetRef());
 
         if (this.configuration.enter) {
           this.configuration.enter(transition.getTargetRef());

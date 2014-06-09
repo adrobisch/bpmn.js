@@ -18,11 +18,21 @@
     "grunt-contrib-connect": "~0.7",
     "grunt-urequire": "~0.6",
     "grunt-mocha-test": "~0.10",
+    "grunt-karma": "~0.8",
     "jquery": "~2.1",
     "mocha": "~1.20",
     "chai": "~1.9",
     "sinon": "~1.10",
     "canvas": "~1.1",
-    "jsdom": "~0.10"
+    "jsdom": "~0.10",
+    "karma": "~0.12",
+    "karma-jasmine": "~0.1.0",
+    "karma-mocha": "~0.1",
+    "karma-requirejs": "~0.2",
+    "karma-chrome-launcher" : "~0.1",
+    "karma-firefox-launcher" : "~0.1",
+    "karma-phantomjs-launcher" : "~0.1",
+    "karma-chai-sinon" : "~0.1",
+    "phantomjs": "~1.9"
   }
 }

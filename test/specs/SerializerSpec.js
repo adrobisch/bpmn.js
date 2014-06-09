@@ -1,28 +1,6 @@
-var chai = require('chai'),
-    assert = chai.assert,
-    should = chai.should();
-
-var _ = require("lodash");
-
-var fs = require("fs"),
-    Bpmn = require("../../lib/bpmn.combined");
-
-function assertElementCount(elements, tag, expectedCount) {
-  var currentCount = 0;
-
-  _.forEach(elements, function (element) {
-    if (element.tag == tag) {
-      currentCount++;
-    }
-  });
-
-  assert.equal(currentCount, expectedCount, tag + ' element count');
-}
-
 describe('Serializer', function(){
   describe('#fromXML()', function(){
-    it('should deserialize A.1.0 model', function(){
-      var bpmnXml = fs.readFileSync("test/data/reference/A.1.0.bpmn").toString();
+    it('should deserialize A.1.0', withData("test/data/reference/A.1.0.bpmn", function (bpmnXml) {
       var bpmn = new Bpmn();
 
       var definitions = bpmn.fromXML(bpmnXml);
@@ -52,12 +30,12 @@ describe('Serializer', function(){
       should.exist(startEvent.getBounds());
       assert.equal(startEvent.getBounds().x(), 186.0);
       assert.equal(startEvent.getBounds().y(), 336.0);
-    });
+      assert.equal(startEvent.getBounds().width(), 30.0);
+      assert.equal(startEvent.getBounds().height(), 30.0);
+    }));
 
-    it('should deserialize subprocess model', function(){
-      var bpmnXml = fs.readFileSync("test/data/test-subprocess.bpmn").toString();
+    it('should deserialize subprocess model', withData("test/data/test-subprocess.bpmn", function(bpmnXml){
       var bpmn = new Bpmn();
-
       var definitions = bpmn.serializer.fromXML(bpmnXml);
 
       should.exist(definitions);
@@ -78,10 +56,18 @@ describe('Serializer', function(){
       assertElementCount(flowElements, "boundaryEvent", 2);
       assertElementCount(flowElements, "subProcess", 1);
       assert.lengthOf(flowElements, 20);
-    });
 
-    it('should deserialize empty process model', function(){
-      var bpmnXml = fs.readFileSync("test/data/test-empty-process.bpmn").toString();
+      var subProcess = definitions.index.item("sid-5EC18B61-6E3C-4AEF-94E4-3D8F45AD9B7E");
+      assert.lengthOf(subProcess.flowElements(), 5);
+
+      var startEvent = definitions.index.item("sid-04A494EF-7D56-4E81-80D9-7F89CDC2ACF4");
+      assert.equal(startEvent.outgoing().length, 1);
+
+      var parallelGateway = definitions.index.item("sid-6E6B3941-46F9-4E74-9288-FA20CFF70A1E");
+      assert.equal(parallelGateway.incoming().length, 2);
+    }));
+
+    it('should deserialize empty process model', withData("test/data/test-empty-process.bpmn", function(bpmnXml){
       var bpmn = new Bpmn();
 
       var definitions = bpmn.serializer.fromXML(bpmnXml);
@@ -89,6 +75,6 @@ describe('Serializer', function(){
       should.exist(definitions);
       assert.lengthOf(definitions.process(), 1);
       assert.isFalse(definitions.process()[0].isExecutable());
-    });
+    }));
   })
 });

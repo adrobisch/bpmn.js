@@ -20,7 +20,13 @@ module.exports = function(grunt) {
     watch: {
       tests: {
         files: ['js/**/*', 'test/**/*', 'example.html'],
-        tasks: ['urequire:combined', 'mochaTest']
+        tasks: ['urequire:combined', 'karma']
+      }
+    },
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js',
+        autoWatch: false
       }
     },
     uglify: {
@@ -66,7 +72,8 @@ module.exports = function(grunt) {
         template: 'combined',
         path: "js/",
         main: 'bpmn/Bpmn',
-        dstPath: "lib/bpmn.combined.js"
+        dstPath: "lib/bpmn.combined.js",
+        rootExports: 'Bpmn'
       },
 
       combined_minified: {
@@ -106,8 +113,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-urequire');
+  grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('server', [ 'connect:server'] );
-  grunt.registerTask('default', ['urequire:combined', 'mochaTest']);
-  grunt.registerTask('dist', ['default', 'urequire:combined_minified', 'requirejs']);
+  grunt.registerTask('default', ['test', 'watch:tests'] );
+  grunt.registerTask('test', ['urequire:combined', 'karma', 'mochaTest:test']);
+  grunt.registerTask('dist', ['test', 'urequire:combined_minified', 'requirejs']);
 };

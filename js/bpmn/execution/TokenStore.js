@@ -2,7 +2,7 @@ define(["bpmn/util/JSClass"], function (jsclass) {
 
   var tokenStore = {
 
-    constructor : function (tokenMap) {
+    initialize : function (tokenMap) {
       this.tokenMap = tokenMap ? tokenMap : {};
     },
 

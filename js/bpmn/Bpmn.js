@@ -11,14 +11,20 @@ define([
       this.serializer = new Serializer;
     },
 
+    fromXML: function(bpmnXml) {
+      return this.serializer.fromXML(bpmnXml);
+    },
+
     renderer: function (definitions, options) {
       return new Renderer(definitions, options);
     },
 
-    fromXML: function(bpmnXml) {
-      return this.serializer.fromXML(bpmnXml);
+    instance: function(definitions, configuration) {
+      return new Instance(definitions, configuration);
     }
   };
 
-  return new jsclass.Class(bpmn);
+  var bpmnClass = new jsclass.Class(bpmn);
+  window.Bpmn = bpmnClass;
+  return bpmnClass;
 });
