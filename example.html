@@ -17,6 +17,7 @@
             "lodash" : "node_modules/lodash/lodash",
             "sax": 'node_modules/sax/lib/sax',
             "fabric": 'node_modules/fabric/dist/fabric',
+            "q": 'node_modules/q/q',
             "bpmn" : "lib/bpmn.combined"
           },
           shim: {
@@ -31,6 +32,9 @@
             },
             "fabric" : {
               exports: "fabric"
+            },
+            "q" : {
+              exports: "Q"
             }
           }
         });
@@ -43,7 +47,7 @@
               scale: 1
           };
 
-          $.get("test/data/test-and.bpmn", function (bpmnXml) {
+          $.get("test/data/reference/A.2.0.bpmn", function (bpmnXml) {
               var bpmn = new Bpmn();
               var definitions = bpmn.fromXML(bpmnXml);
               bpmn.renderer(definitions, options).render();
