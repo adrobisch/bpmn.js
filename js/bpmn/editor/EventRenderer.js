@@ -24,6 +24,9 @@ define(["lodash", "bpmn/EndEvent"], function (_, EndEvent) {
 
       _.extend(eventProperties, this.typeProperties(event));
 
+      eventProperties.width += eventProperties.strokeWidth * 2;
+      eventProperties.height += eventProperties.strokeWidth * 2;
+
       var circle = renderer.canvas.createCircle(eventProperties);
       group.add(circle);
       return group;
