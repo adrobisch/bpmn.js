@@ -15,39 +15,34 @@ define(["fabric", "lodash"], function (fabric, _) {
       canvas = this.canvas = new fabric.Canvas(options.container);
     }
 
-    var shapeGroup = this.shapeGroup = new fabric.Group([], {left: 0, top: 0})
-        .setOriginX(0).setOriginY(0);
-
-    shapeGroup.setScaleX(this.scale);
-    shapeGroup.setScaleY(this.scale);
-
-    canvas.add(shapeGroup);
-
-    var connectionGroup = this.connectionGroup = new fabric.Group([], {})
-        .setOriginX(0).setOriginY(0);
-
-    connectionGroup.setScaleX(this.scale);
-    connectionGroup.setScaleY(this.scale);
-
-    canvas.add(connectionGroup);
-
     this.draw = function() {
       this.canvas.renderAll();
     };
 
     this.addShape = function(shape) {
-      shapeGroup.add(shape);
+      canvas.add(shape);
     };
 
     this.addConnection = function(connection) {
-      connectionGroup.add(connection);
+      canvas.add(connection);
     };
 
     this.createGroup = function (groupOptions) {
       // FIXME create a group which acts like that: http://jsfiddle.net/fabricjs/2Y587/
       // problem is https://github.com/kangax/fabric.js/issues/485
-      return new fabric.Group([], {top: 0, left: 0, width: 0, height: 0})
-          .setOriginX(0).setOriginY(0);
+      return new function () {
+        this.add = function(shape) {
+          canvas.add(shape);
+        };
+
+        this.set = function(properties) {
+          return this;
+        };
+
+        this.setCoords = function () {
+          return this;
+        };
+      };
     };
 
     this.createRect = function (rect) {

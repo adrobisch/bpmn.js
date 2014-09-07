@@ -73,31 +73,16 @@ function (jsclass, _, Activity, Gateway, Event, SequenceFlow, Canvas, ActivityRe
         draggable: true
       });
 
-      if (element instanceof SequenceFlow) {
-        this.renderConnection(element, group);
-        this.canvas.addConnection(group);
-      }
-      else if (element instanceof Activity) {
+      if (element instanceof Event) {
+        var eventShape = this.event.render(element, group);
+        this.setBounds(group, this.eventBounds(element));
+        this.canvas.expandCanvasIfNeeded(eventShape);
+      } else if (element instanceof Activity) {
         var activityGroup = this.activity.render(element, group);
         this.label.renderCentered(element.getBounds(), activityGroup, element.name());
-        this.canvas.addShape(group);
-        this.setGroupBounds(group, element.getBounds());
-      }
-      else if (element instanceof Event) {
-        this.event.render(element, group);
-        this.canvas.addShape(group);
-        this.setGroupBounds(group, this.eventBounds(element));
-      }
-      else if (element instanceof Gateway) {
-        this.gateway.render(element, group);
-        this.canvas.addShape(group);
-        this.setGroupBounds(group, element.getBounds());
-      }
-      else {
-        console.log("unable to render flowElement", element);
+        this.setBounds(group, element.getBounds());
       }
 
-      this.canvas.expandCanvasIfNeeded(group);
     },
 
     eventBounds: function (eventElement) {
@@ -110,7 +95,7 @@ function (jsclass, _, Activity, Gateway, Event, SequenceFlow, Canvas, ActivityRe
       };
     },
 
-    setGroupBounds : function (group, bounds, offset) {
+    setBounds : function (shape, bounds, offset) {
       var offset = offset ? offset: 0;
 
       var coords = {
@@ -120,7 +105,7 @@ function (jsclass, _, Activity, Gateway, Event, SequenceFlow, Canvas, ActivityRe
         height: bounds.height()
       };
 
-      group.set(coords).setCoords();
+      shape.set(coords).setCoords();
     },
 
     renderConnection: function (connection, group) {

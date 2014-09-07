@@ -29,7 +29,7 @@ define(["lodash", "bpmn/EndEvent"], function (_, EndEvent) {
 
       var circle = renderer.canvas.createCircle(eventProperties);
       group.add(circle);
-      return group;
+      return circle;
     };
   };
   return EventRenderer;
