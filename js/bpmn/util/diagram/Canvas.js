@@ -31,15 +31,27 @@ define(["fabric", "lodash"], function (fabric, _) {
       // FIXME create a group which acts like that: http://jsfiddle.net/fabricjs/2Y587/
       // problem is https://github.com/kangax/fabric.js/issues/485
       return new function () {
+        this.groupShapes = [];
+        this.groupProperties = {};
+
         this.add = function(shape) {
           canvas.add(shape);
+          this.groupShapes.push(shape);
+          return this;
         };
 
         this.set = function(properties) {
+          this.groupProperties = properties;
           return this;
         };
 
         this.setCoords = function () {
+          var shapeProps = this.groupProperties;
+          _.forEach(this.groupShapes, function (shape, index) {
+            shape.left = shapeProps.left;
+            shape.top = shapeProps.top;
+            shape.setCoords();
+          });
           return this;
         };
       };
@@ -78,7 +90,8 @@ define(["fabric", "lodash"], function (fabric, _) {
         width: text.width,
         height: text.height,
         fontSize: text.fontSize,
-        fontFamily: text.fontFamily
+        fontFamily: text.fontFamily,
+        selectable: false
       };
 
       var textObj = new fabric.Text(text.text, textProperties);
