@@ -8,7 +8,7 @@ define([], function () {
         left: bounds.width() / 2 - text.getWidth() / 2
       };
 
-      //text.set(updatedProperties).setCoords();
+      text.set(updatedProperties).setCoords();
 
       group.add(text);
       return group;

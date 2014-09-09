@@ -34,9 +34,33 @@ define(["fabric", "lodash"], function (fabric, _) {
         this.groupShapes = [];
         this.groupProperties = {};
 
+        canvas.on("object:moving", function (options) {
+          console.log("options", options, options.target.type);
+          if (options.target.group) {
+            _.forEach(options.target.group.groupShapes, function (shape, index) {
+              if (shape === options.target) {
+                return;
+              }
+              shape.left = shape.offsetLeft + options.target.group.groupProperties.left;
+              shape.top = shape.offsetTop + options.target.group.groupProperties.top;
+
+              options.target.group.groupProperties.left = options.target.left;
+              options.target.group.groupProperties.top = options.target.top;
+
+              shape.setCoords();
+            });
+          }
+        });
+
         this.add = function(shape) {
           canvas.add(shape);
+          shape.group = this;
+
+          shape.offsetLeft = shape.left;
+          shape.offsetTop = shape.top;
+
           this.groupShapes.push(shape);
+
           return this;
         };
 
@@ -47,9 +71,9 @@ define(["fabric", "lodash"], function (fabric, _) {
 
         this.setCoords = function () {
           var shapeProps = this.groupProperties;
-          _.forEach(this.groupShapes, function (shape, index) {
-            shape.left = shapeProps.left;
-            shape.top = shapeProps.top;
+          _.forEach(this.groupShapes, function (shape) {
+            shape.left = shape.offsetLeft + shapeProps.left;
+            shape.top = shape.offsetTop + shapeProps.top;
             shape.setCoords();
           });
           return this;
