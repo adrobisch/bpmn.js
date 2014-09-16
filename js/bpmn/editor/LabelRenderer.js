@@ -5,7 +5,8 @@ define([], function () {
       var text = this.createLabelText(labelText, bounds);
       var updatedProperties = {
         top: bounds.height() / 2 - text.getFontSize() / 2,
-        left: bounds.width() / 2 - text.getWidth() / 2
+        left: bounds.width() / 2 - text.getWidth() / 2,
+        selectable: false
       };
 
       text.set(updatedProperties).setCoords();

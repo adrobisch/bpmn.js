@@ -34,27 +34,51 @@ define(["fabric", "lodash"], function (fabric, _) {
         this.groupShapes = [];
         this.groupProperties = {};
 
-        canvas.on("object:moving", function (options) {
-          console.log("options", options, options.target.type);
-          if (options.target.group) {
-            _.forEach(options.target.group.groupShapes, function (shape, index) {
-              if (shape === options.target) {
-                return;
+        canvas.on("object:selected", function (options) {
+          if (options.target.type == "group") {
+            canvas.selectedGroup = options.target;
+
+            options.target.set({"hasRotatingPoint" : false});
+            _.forEach(options.target._objects, function (shape) {
+              if (shape.shapeGroup) {
+                shape.shapeGroup.setAll({"visible" : false});
               }
-              shape.left = shape.offsetLeft + options.target.group.groupProperties.left;
-              shape.top = shape.offsetTop + options.target.group.groupProperties.top;
-
-              options.target.group.groupProperties.left = options.target.left;
-              options.target.group.groupProperties.top = options.target.top;
-
-              shape.setCoords();
             });
+          }
+        });
+
+        canvas.on("selection:cleared", function (options) {
+          console.log("cleared", options);
+
+          if (canvas.selectedGroup) {
+            _.forEach(canvas.selectedGroup._objects, function (shape) {
+              if (shape.shapeGroup) {
+                shape.shapeGroup.setAll({"visible" : true});
+              }
+            });
+            canvas.selectedGroup = undefined;
+          }
+        });
+
+        canvas.on("object:moving", function (options) {
+          var groupFunction = function shapeFn(group) {
+            if (!group.groupProperties) {
+              return;
+            }
+
+            group.groupProperties.left = options.target.left;
+            group.groupProperties.top = options.target.top;
+            group.setCoords();
+          };
+
+          if (options.target.shapeGroup) {
+            groupFunction(options.target.shapeGroup);
           }
         });
 
         this.add = function(shape) {
           canvas.add(shape);
-          shape.group = this;
+          shape.shapeGroup = this;
 
           shape.offsetLeft = shape.left;
           shape.offsetTop = shape.top;
@@ -69,9 +93,16 @@ define(["fabric", "lodash"], function (fabric, _) {
           return this;
         };
 
+        this.setAll = function(properties) {
+          _.forEach(this.groupShapes, function (groupShape){
+              groupShape.set(properties);
+          });
+        };
+
         this.setCoords = function () {
           var shapeProps = this.groupProperties;
           _.forEach(this.groupShapes, function (shape) {
+            console.log("setting coords: ", shape.type);
             shape.left = shape.offsetLeft + shapeProps.left;
             shape.top = shape.offsetTop + shapeProps.top;
             shape.setCoords();
@@ -114,8 +145,7 @@ define(["fabric", "lodash"], function (fabric, _) {
         width: text.width,
         height: text.height,
         fontSize: text.fontSize,
-        fontFamily: text.fontFamily,
-        selectable: false
+        fontFamily: text.fontFamily
       };
 
       var textObj = new fabric.Text(text.text, textProperties);
