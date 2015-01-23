@@ -18,13 +18,11 @@ module.exports = function(config) {
       "node_modules/jquery/dist/jquery.js",
       "node_modules/lodash/lodash.js",
       "node_modules/sax/lib/sax.js",
-      "node_modules/fabric/dist/fabric.js",
       "node_modules/q/q.js",
       "lib/bpmn.combined.js",
 
       "test/util/Assertions.js",
       "test/util/Data.js",
-      "test/util/Canvas.js",
       {pattern: 'test/data/**/*.*', included: false},
       {pattern: 'test/specs/**/*Spec.js'}
     ],

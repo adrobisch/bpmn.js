@@ -13,6 +13,7 @@ define(["bpmn/execution/TokenStore", "bpmn/util/JSClass", "lodash", "q", "bpmn/u
       this.behaviours["endEvent"] = this.behaviours["takeNone"];
       this.behaviours["userTask"] = this.behaviours["takeNone"];
       this.behaviours["serviceTask"] = this.behaviours["takeAll"];
+      this.behaviours["task"] = this.behaviours["takeAll"];
       this.behaviours["exclusiveGateway"] = this.behaviours["xor"];
       this.behaviours["parallelGateway"] = this.behaviours["and"];
     },

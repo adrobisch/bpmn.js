@@ -47,10 +47,18 @@
               scale: 1
           };
 
-          $.get("test/data/reference/A.2.0.bpmn", function (bpmnXml) {
+          $.get("test/data/reference/A.1.0.bpmn", function (bpmnXml) {
               var bpmn = new Bpmn();
               var definitions = bpmn.fromXML(bpmnXml);
-              bpmn.renderer(definitions, options).render();
+
+
+              var configuration = {
+                "enter": function (node) {
+                  alert("executing node " + node.name());
+                }
+              };
+
+              bpmn.instance(definitions, configuration).start("_93c466ab-b271-4376-a427-f4c353d55ce8");
           });
       });
     </script>

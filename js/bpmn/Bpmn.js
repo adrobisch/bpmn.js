@@ -3,8 +3,7 @@ define([
   "bpmn/util/JSClass",
   "bpmn/Definitions",
   "bpmn/execution/Instance",
-  "bpmn/util/Serializer",
-  "bpmn/editor/Renderer"
+  "bpmn/util/Serializer"
 ], function (jsclass, Definitions, Instance, Serializer, Renderer) {
   var bpmn = {
     initialize: function () {
@@ -13,10 +12,6 @@ define([
 
     fromXML: function(bpmnXml) {
       return this.serializer.fromXML(bpmnXml);
-    },
-
-    renderer: function (definitions, options) {
-      return new Renderer(definitions, options);
     },
 
     instance: function(definitions, configuration) {

@@ -1,7 +1,8 @@
 Overview
 ========
 
-bpmn.js is a implementation of the BPMN 2.0 Metamodel in JavaScript including rendering and execution support.
+bpmn.js is a implementation of the BPMN 2.0 Metamodel in JavaScript including execution support.
+If you need a JavaScript-based BPMN renderer, check [bpmn-io](https://github.com/bpmn-io).
 
 Getting started
 ===============
@@ -11,19 +12,16 @@ Check the `example.html` for a requirejs based setup of bpmn.js
 Development
 ===========
 
-Since `node-canvas` is a dev dependency, you should meet its requirements before `npm install`.
-Check the corresponding [wiki](https://github.com/LearnBoost/node-canvas/wiki).
-
 Run
 ```
     grunt watch:tests
-```   
-to start the server side mocha tests and have grunt re-run them on changes.
+```
+to run the karma tests and have grunt re-run them on changes.
 
 Run
 ```
     grunt dist
-```    
+```
 to update both combined (AMD + nodejs) and requirejs-only flavors in the `lib` folder
 
 License
